@@ -1,18 +1,11 @@
-import React from 'react';
-import RegisterForm from './register';
+import AppRouter from './routing/AppRouter';
 
-function App() {
-  const goToLogin = () => {
-    alert('Navigating to Login Page...');
-    // Logic to navigate to login page can be added here, e.g.:
-    // navigate('/login');
-  };
-
-  return (
-    <div className="App">
-      <RegisterForm onLogin={goToLogin} />
-    </div>
-  );
+const App = () => {
+    return (
+      <div>
+        <AppRouter/>
+      </div>
+    );
 }
 
 export default App;
