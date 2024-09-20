@@ -1,15 +1,32 @@
 import React, { useState } from 'react';
 import { Button, TextField, Container, Typography } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
-function RegisterForm({ onLogin }) {
-  const [username, setUsername] = useState('');
+function RegisterForm() {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [validCredentials, setValidCredentials] = useState(false);
 
-  const handleRegister = (e) => {
+  const checkValid = () => {
+    // check valid email
+    if (!email.includes('@') || !email.includes('.') || email.length < 5) {
+        setValidCredentials(false);
+    }
+    // check valid password
+    else if (password.length < 5 ) {
+        setValidCredentials(false);
+    }
+    else {
+        setValidCredentials(true);
+    }
+}
+
+
+  const Register = (e) => {
     e.preventDefault();
-    console.log('Registering:', { username, password });
-    alert(`User ${username} registered!`);
+    console.log('Registering:', { email, password });
+    navigate("/home")
   };
 
   return (
@@ -17,19 +34,21 @@ function RegisterForm({ onLogin }) {
       <Typography variant="h4" gutterBottom>
         Register
       </Typography>
-      <form onSubmit={handleRegister} style={styles.form}>
+      <form onSubmit={Register} style={styles.form}>
         <div style={styles.inputContainer}>
           <TextField
             fullWidth
-            id="username"
-            label="Username"
+            id="email"
+            label="Email"
             variant="outlined"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            value={email}
+            onChange={(e) => {setEmail(e.target.value);
+                checkValid();}
+            }
             required
             sx={{
               label: {
-                color: 'text.primary',  // Apply text color to the label
+                color: 'text.primary',  
               }
             }}
           />
@@ -42,11 +61,13 @@ function RegisterForm({ onLogin }) {
             type="password"
             variant="outlined"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {setPassword(e.target.value),
+                checkValid();}
+            }
             required
             sx={{
               label: {
-                color: 'text.primary',  // Apply text color to the label
+                color: 'text.primary', 
               }
             }}
           />

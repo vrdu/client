@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import { Button, TextField, Container, Typography } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
-function RegisterForm({ onLogin }) {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+function RegisterForm() {
+    const navigate = useNavigate();
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
 
-  const handleRegister = (e) => {
+  const Register = (e) => {
     e.preventDefault();
     console.log('Registering:', { username, password });
-    alert(`User ${username} registered!`);
+    navigate("/home")
   };
 
   return (
@@ -17,7 +18,7 @@ function RegisterForm({ onLogin }) {
       <Typography variant="h4" gutterBottom>
         Login
       </Typography>
-      <form onSubmit={handleRegister} style={styles.form}>
+      <form onSubmit={Register} style={styles.form}>
         <div style={styles.inputContainer}>
           <TextField
             fullWidth
@@ -59,7 +60,7 @@ function RegisterForm({ onLogin }) {
           >
             Login
           </Button>
-          <Link to="/login">
+          <Link to="/register">
           <Button
             variant="outlined"
             color="secondary" 
