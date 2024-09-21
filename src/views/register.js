@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, TextField, Container, Typography } from '@mui/material';
+import { Button, TextField, Container, Box } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 
 function RegisterForm() {
@@ -20,7 +20,7 @@ function RegisterForm() {
     else {
         setValidCredentials(true);
     }
-}
+  }
 
 
   const Register = (e) => {
@@ -31,9 +31,9 @@ function RegisterForm() {
 
   return (
     <Container maxWidth="sm" style={styles.container}>
-      <Typography variant="h4" gutterBottom>
-        Register
-      </Typography>
+      <Box component="h4" sx={{ fontSize: '2rem', fontWeight: 'bold' }}>
+      Register
+      </Box>
       <form onSubmit={Register} style={styles.form}>
         <div style={styles.inputContainer}>
           <TextField
@@ -61,7 +61,7 @@ function RegisterForm() {
             type="password"
             variant="outlined"
             value={password}
-            onChange={(e) => {setPassword(e.target.value),
+            onChange={(e) => {setPassword(e.target.value);
                 checkValid();}
             }
             required

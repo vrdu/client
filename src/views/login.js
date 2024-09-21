@@ -1,32 +1,68 @@
 import React, { useState } from 'react';
-import { Button, TextField, Container, Typography } from '@mui/material';
+import { Button, TextField, Container, Box } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
+import User from '../models/user';
+import {api, handleError} from '../helpers/api';
 
 function RegisterForm() {
     const navigate = useNavigate();
-    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [alertStatus, setAlertStatus] = useState(false);
+    const [validCredentials, setValidCredentials] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
+    const checkValid = () => {
+      // check valid email
+      if (!email.includes('@') || !email.includes('.') || email.length < 5) {
+          setValidCredentials(false);
+      }
+      // check valid password
+      else if (password.length < 5 ) {
+          setValidCredentials(false);
+      }
+      else {
+          setValidCredentials(true);
+      }
+    }
 
-  const Register = (e) => {
-    e.preventDefault();
-    console.log('Registering:', { username, password });
-    navigate("/home")
+  const Register = async (e) => {
+    try {
+      const requestBody = JSON.stringify({email, password});
+      const response = await api(false, false).post('/users/create', requestBody);
+
+      // Get the returned user and update a new object.
+      const user = new user(response.data);
+
+      // Store the token into the local storage.
+      sessionStorage.setItem('username', user.username);
+    console.log('Login:', { email, password });
+    navigate("/home");
+    } catch (error) {
+    raiseError(error.response.data.message);
+    }
   };
+  const raiseError = (error) => {
+    setAlertStatus(true);
+    setErrorMessage(error)
+    
+}
 
   return (
     <Container maxWidth="sm" style={styles.container}>
-      <Typography variant="h4" gutterBottom>
-        Login
-      </Typography>
+      <Box component="h4" sx={{ fontSize: '2rem', fontWeight: 'bold' }}>
+      Login
+      </Box>
       <form onSubmit={Register} style={styles.form}>
         <div style={styles.inputContainer}>
           <TextField
             fullWidth
-            id="username"
-            label="Username"
+            id="email"
+            label="Email"
             variant="outlined"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            value={email}
+            onChange={(e) => {setEmail(e.target.value);
+              checkValid();}
+          }
             required
             sx={{
               label: {
@@ -43,7 +79,9 @@ function RegisterForm() {
             type="password"
             variant="outlined"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {setPassword(e.target.value);
+              checkValid();}
+            }
             required
             sx={{
               label: {
