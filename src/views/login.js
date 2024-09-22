@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import User from '../models/user';
 import {api, handleError} from '../helpers/api';
 
-function RegisterForm() {
+function LoginForm() {
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -25,10 +25,12 @@ function RegisterForm() {
       }
     }
 
-  const Register = async (e) => {
+  const Login = async (e) => {
+    e.preventDefault(); 
     try {
+      console.log("here")
       const requestBody = JSON.stringify({email, password});
-      const response = await api(false, false).post('/users/create', requestBody);
+      const response = await api(false).post('/users/create', requestBody);
 
       // Get the returned user and update a new object.
       const user = new user(response.data);
@@ -52,7 +54,7 @@ function RegisterForm() {
       <Box component="h4" sx={{ fontSize: '2rem', fontWeight: 'bold' }}>
       Login
       </Box>
-      <form onSubmit={Register} style={styles.form}>
+      <form onSubmit={Login} style={styles.form}>
         <div style={styles.inputContainer}>
           <TextField
             fullWidth
@@ -140,4 +142,4 @@ const styles = {
   },
 };
 
-export default RegisterForm;
+export default LoginForm;

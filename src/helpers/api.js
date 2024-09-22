@@ -6,11 +6,9 @@ export const api = (token, id) => {
     const headers = {
 
     };
-    if (token) {
-        headers['token'] = token;
-    }
-    if (id) {
-        headers['id'] = id;
+    
+    if (username) {
+        headers['username'] = username;
     }
     headers['Content-Type'] = 'application/json';
     headers['Access-Control-Allow-Origin'] = '*';
