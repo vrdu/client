@@ -2,7 +2,7 @@ import axios from 'axios';
 import {getDomain}  from './getDomain';
 
 
-export const api = (token, id) => {
+export const api = (username) => {
     const headers = {
 
     };

@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
-import { Button, TextField, Container, Box } from '@mui/material';
+import { Button, TextField, Container, Box, Alert, AlertTitle } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
+import User from '../models/user';
+import {api, handleError} from '../helpers/api';
+
 
 function RegisterForm() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [validCredentials, setValidCredentials] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [alertStatus, setAlertStatus] = useState(false);
 
   const checkValid = () => {
     // check valid email
@@ -23,11 +28,42 @@ function RegisterForm() {
   }
 
 
-  const Register = (e) => {
-    e.preventDefault();
-    console.log('Registering:', { email, password });
-    navigate("/home")
+  const Register = async (e) => {
+    e.preventDefault(); 
+    checkValid();
+    if (validCredentials === false) {
+      raiseError("Invalid email or password")
+    }
+    else{
+      try {
+        console.log("here")
+        const requestBody = JSON.stringify({email, password});
+        const response = await api(false).post('/users/create', requestBody);
+        console.log("response:")
+        console.log(response)
+        // Get the returned user and update a new object.
+        const user = new User(response.data);
+        console.log("made it")
+        // Store the token into the local storage.
+        sessionStorage.setItem('username', user.username);
+      console.log('Register:', { email, password });
+      navigate("/home");
+      } catch (error) {
+      raiseError(error.response.data.detail);
+      }
+    }
+    
   };
+  const raiseError = (error) => {
+    console.log("error:")
+    console.log(error);
+    setAlertStatus(true);
+    setErrorMessage(error)
+    
+  }
+  const handleClose = () => {
+    setAlertStatus(false);
+}
 
   return (
     <Container maxWidth="sm" style={styles.container}>
@@ -42,8 +78,7 @@ function RegisterForm() {
             label="Email"
             variant="outlined"
             value={email}
-            onChange={(e) => {setEmail(e.target.value);
-                checkValid();}
+            onChange={(e) => {setEmail(e.target.value)}
             }
             required
             sx={{
@@ -61,8 +96,7 @@ function RegisterForm() {
             type="password"
             variant="outlined"
             value={password}
-            onChange={(e) => {setPassword(e.target.value);
-                checkValid();}
+            onChange={(e) => {setPassword(e.target.value)}
             }
             required
             sx={{
@@ -89,6 +123,15 @@ function RegisterForm() {
           </Button>
           </Link>
         </div>
+        <div className="register popup-message">
+                {alertStatus && (
+                    <Alert severity="error"
+                           onClose={handleClose}>
+                        <AlertTitle>Registration Failed - <strong>{errorMessage}</strong></AlertTitle> 
+                        
+                    </Alert>
+                )}
+            </div>
       </form>
     </Container>
   );

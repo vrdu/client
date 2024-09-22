@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, TextField, Container, Box } from '@mui/material';
+import { Button, TextField, Container, Box, Alert, AlertTitle } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import User from '../models/user';
 import {api, handleError} from '../helpers/api';
@@ -11,6 +11,7 @@ function LoginForm() {
     const [alertStatus, setAlertStatus] = useState(false);
     const [validCredentials, setValidCredentials] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
+    
     const checkValid = () => {
       // check valid email
       if (!email.includes('@') || !email.includes('.') || email.length < 5) {
@@ -27,26 +28,38 @@ function LoginForm() {
 
   const Login = async (e) => {
     e.preventDefault(); 
-    try {
-      console.log("here")
-      const requestBody = JSON.stringify({email, password});
-      const response = await api(false).post('/users/create', requestBody);
-
-      // Get the returned user and update a new object.
-      const user = new user(response.data);
-
-      // Store the token into the local storage.
-      sessionStorage.setItem('username', user.username);
-    console.log('Login:', { email, password });
-    navigate("/home");
-    } catch (error) {
-    raiseError(error.response.data.message);
+    checkValid();
+    if (validCredentials === false) {
+      raiseError("Invalid email or password")
+    }
+    else{
+      try {
+        console.log("here")
+        const requestBody = JSON.stringify({email, password});
+        const response = await api(false).post('/users/login', requestBody);
+        console.log("response:")
+        console.log(response)
+        // Get the returned user and update a new object.
+        const user = new User(response.data);
+        console.log("made it")
+        // Store the token into the local storage.
+        sessionStorage.setItem('username', user.username);
+      console.log('Register:', { email, password });
+      navigate("/home");
+      } catch (error) {
+      raiseError(error.response.data.detail);
+      }
     }
   };
   const raiseError = (error) => {
+    console.log("error:")
+    console.log(error);
     setAlertStatus(true);
     setErrorMessage(error)
     
+  }
+  const handleClose = () => {
+    setAlertStatus(false);
 }
 
   return (
@@ -109,6 +122,14 @@ function LoginForm() {
           </Button>
           </Link>
         </div>
+        <div className="register popup-message">
+                {alertStatus && (
+                    <Alert severity="error"
+                           onClose={handleClose}>
+                        <AlertTitle>Login Failed - <strong>{errorMessage}</strong></AlertTitle> 
+                    </Alert>
+                )}
+            </div>
       </form>
     </Container>
   );
