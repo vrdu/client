@@ -3,6 +3,7 @@ import { Button, TextField, Container, Box, Alert, AlertTitle } from '@mui/mater
 import { Link, useNavigate } from 'react-router-dom';
 import User from '../models/user';
 import {api, handleError} from '../helpers/api';
+import '../styling/login.css';
 
 function LoginForm() {
     const navigate = useNavigate();
@@ -65,12 +66,12 @@ function LoginForm() {
 }
 
   return (
-    <Container maxWidth="sm" style={styles.container}>
+    <Container maxWidth="sm" className="container">
       <Box component="h4" sx={{ fontSize: '2rem', fontWeight: 'bold' }}>
       Login
       </Box>
-      <form onSubmit={Login} style={styles.form}>
-        <div style={styles.inputContainer}>
+      <form onSubmit={Login} className="form">
+      <div className="inputContainer">  
           <TextField
             fullWidth
             id="email"
@@ -88,7 +89,7 @@ function LoginForm() {
             }}
           />
         </div>
-        <div style={styles.inputContainer}>
+        <div className="inputContainer">
           <TextField
             fullWidth
             id="password"
@@ -107,7 +108,7 @@ function LoginForm() {
             }}
           />
         </div>
-        <div style={styles.buttonContainer}>
+        <div className="buttonContainer">
           <Button
             variant="contained"
             color="primary"
@@ -137,32 +138,6 @@ function LoginForm() {
   );
 }
 
-const styles = {
-  container: {
-    marginTop: '50px',
-    padding: '20px',
-    borderRadius: '10px',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-    backgroundColor: 'background',
-    textAlign: 'center',
-    textcolor: "text.primary",
-  },
-  form: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '15  px',
-  },
-  buttonContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-    gap: '100px',
-    marginTop: '20px',
-  },
-  inputContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '5px',
-  },
-};
+
 
 export default LoginForm;

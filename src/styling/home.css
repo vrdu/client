@@ -1,0 +1,25 @@
+
+@import "./index.css";
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: var(background-color); /* Optional background color */
+  }
+  
+  .blob {
+    width: 66%; /* 2/3 of the screen's width */
+    padding: 40px;
+    background-color: var(--shadaDarker);
+    border-radius: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  .heading {
+    font-size: 48px;
+    color: var(--blue);
+    margin: 0;
+  }
+  

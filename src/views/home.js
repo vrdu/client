@@ -1,10 +1,14 @@
-
 import React from 'react';
+import '../styling/home.css';  
 
-// Simple Home component
 const Home = () => {
-    return (
-      <div>Home</div>
-    );
-  };
-  export default Home;
+  return (
+    <div className="container">
+      <div className="blob">
+        <h1 className="heading">Extraction AIs</h1>
+      </div>
+    </div>
+  );
+};
+
+export default Home;

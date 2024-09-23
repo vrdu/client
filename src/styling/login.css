@@ -1,0 +1,32 @@
+@import "./index.css";
+
+.container {
+  margin-top: 50px;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: var(--background); /* Using CSS variable for background */
+  text-align: center;
+  color: var(--text-primary); /* Assuming a CSS variable for text color */
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Fixing gap value with 'px' */
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+  gap: 100px;
+  margin-top: 20px;
+}
+
+.inputContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+  
+    
