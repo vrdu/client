@@ -3,19 +3,19 @@ import '../styling/home.css';
 import { Button, TextField, Container, Box, Alert, AlertTitle } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 
-const Home = () => {
+const ConfigureLabels = () => {
   return (
     <div className="container">
       <div className="blob">
-        <h1 className="heading">Extraction AIs</h1>
+        <h1 className="heading">Configure Labels</h1>
         <div className="buttonContainer">
           
-          <Link to="/ConfigureLabels">
+          <Link to="/uploadInstructionDocuments">
           <Button
             variant="contained"
             color="primary" 
           >
-            Add AI
+            Upload Instruction Documents
           </Button>
           </Link>
         </div>
@@ -24,4 +24,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default ConfigureLabels;
