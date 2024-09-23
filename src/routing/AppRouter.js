@@ -1,6 +1,8 @@
-import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import RegisterForm from '../views/register';
 import LoginForm from '../views/login';
+import Home from '../views/home';
+import ProtectedRoute from './ProtectedRoute';
 
 
 const AppRouter = () => {
@@ -10,6 +12,14 @@ const AppRouter = () => {
                 <Route path="/register" element= {<RegisterForm/>}/>
                 <Route path="/" element={<RegisterForm/>} />
                 <Route path="/login" element= {<LoginForm/>}/>
+                <Route
+                    path="/home"
+                    element={
+                        <ProtectedRoute>
+                        <Home/>
+                        </ProtectedRoute>
+                    }
+                    />
             </Routes>
         </BrowserRouter>
     );

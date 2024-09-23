@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button, TextField, Container, Box, Alert, AlertTitle } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import User from '../models/user';
-import {api, handleError} from '../helpers/api';
+import {api } from '../helpers/api';
 
 
 function RegisterForm() {
@@ -36,17 +36,15 @@ function RegisterForm() {
     }
     else{
       try {
-        console.log("here")
         const requestBody = JSON.stringify({email, password});
-        const response = await api(false).post('/users/create', requestBody);
-        console.log("response:")
-        console.log(response)
+        const response = await api(false).post('/users/create', requestBody,{
+          withCredentials: true
+        });
         // Get the returned user and update a new object.
         const user = new User(response.data);
         console.log("made it")
         // Store the token into the local storage.
         sessionStorage.setItem('username', user.username);
-      console.log('Register:', { email, password });
       navigate("/home");
       } catch (error) {
       raiseError(error.response.data.detail);

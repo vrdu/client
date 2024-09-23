@@ -14,7 +14,7 @@ function LoginForm() {
     
     const checkValid = () => {
       // check valid email
-      if (!email.includes('@') || !email.includes('.') || email.length < 5) {
+      if (!email.includes('@') || !email.includes('.') || email.length < 2) {
           setValidCredentials(false);
       }
       // check valid password
@@ -36,7 +36,9 @@ function LoginForm() {
       try {
         console.log("here")
         const requestBody = JSON.stringify({email, password});
-        const response = await api(false).post('/users/login', requestBody);
+        const response = await api(false).post('/users/login', requestBody,{
+          withCredentials: true
+        });
         console.log("response:")
         console.log(response)
         // Get the returned user and update a new object.
