@@ -1,0 +1,33 @@
+
+@import "./index.css";
+
+.dialog-content {
+    padding: 20px;
+    background-color: var(--shadeDarker);
+  }
+
+.dialog-title {
+    color: var(--blue) !important;
+}
+
+.text-field {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  
+.submit-button {
+    background-color: var(--blue) !important;
+    color: var(--white) !important;
+  }
+  
+.close-button {
+    background-color: var(--red) !important;
+    color: var(--white) !important;
+  }
+  
+.error-message {
+    color: red;
+    font-size: 12px;
+    margin-top: 10px;
+  }
+  

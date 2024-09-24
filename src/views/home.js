@@ -1,11 +1,10 @@
 import React from 'react';
 import '../styling/home.css';  
-import { Button, TextField, Container, Box, Alert, AlertTitle } from '@mui/material';
-import { Link, useNavigate } from 'react-router-dom';
+import { Button} from '@mui/material';
+import { Link} from 'react-router-dom';
 
 const Home = () => {
   return (
-    <div className="container">
       <div className="blob">
         <h1 className="heading">Extraction AIs</h1>
         <div className="buttonContainer">
@@ -20,7 +19,6 @@ const Home = () => {
           </Link>
         </div>
       </div>
-    </div>
   );
 };
 

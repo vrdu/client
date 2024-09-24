@@ -65,7 +65,8 @@ function RegisterForm() {
 }
 
   return (
-    <Container maxWidth="sm" className="container">
+    <div className="container">
+    <Container maxWidth="sm">
       <Box component="h4" sx={{ fontSize: '2rem', fontWeight: 'bold' }}>
       Register
       </Box>
@@ -133,6 +134,7 @@ function RegisterForm() {
             </div>
       </form>
     </Container>
+    </div>
   );
 }
 

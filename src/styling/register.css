@@ -1,14 +1,26 @@
 @import "./index.css";
 
+/* Apply flexbox directly to the body */
+html, body {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center;      /* Center vertically */
+}
+
+/* Your existing container styling */
 .container {
-  margin-top: 50px;
-  padding: 20px;
+  padding: 30px 20px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  background-color: var(--background); /* Using CSS variable for background */
+  background-color: var(--shadeDarker) !important;
   text-align: center;
-  color: var(--text-primary); /* Assuming a CSS variable for text color */
+  color: var(--text-primary) !important;
+  inline-size: max-content;
+  height: 300px !important;
 }
+
 
 .form {
   display: flex;
@@ -21,6 +33,7 @@
   justify-content: center;
   gap: 100px;
   margin-top: 20px;
+
 }
 
 .inputContainer {

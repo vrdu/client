@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Button, TextField, Container, Box, Alert, AlertTitle } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import User from '../models/user';
-import {api, handleError} from '../helpers/api';
-import '../styling/login.css';
+import {api } from '../helpers/api';
+import '../styling/register.css';
 
 function LoginForm() {
     const navigate = useNavigate();
@@ -66,7 +66,8 @@ function LoginForm() {
 }
 
   return (
-    <Container maxWidth="sm" className="container">
+    <div className="container">
+    <Container maxWidth="sm" >
       <Box component="h4" sx={{ fontSize: '2rem', fontWeight: 'bold' }}>
       Login
       </Box>
@@ -135,6 +136,7 @@ function LoginForm() {
             </div>
       </form>
     </Container>
+    </div>
   );
 }
 

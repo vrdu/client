@@ -58,7 +58,7 @@ const UploadInstructionDocuments = () => {
         {isDragActive ? (
           <p>Drop it like its hot!</p>
         ) : (
-          <p>Drag 'n' drop some files here</p>
+          <p>Drag and drop some files here</p>
         )}
       </div>
       <aside>
