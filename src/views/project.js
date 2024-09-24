@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../helpers/api';  
-import '../styling/enterAiName.css';  
+import '../styling/project.css';  
 import '../styling/index.css';  
 
-const EnterAiName = ({ onClose }) => {
-  const [aiName, setAiName] = useState('');
+const Project = ({ onClose }) => {
+  const [projectName, setProjectName] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
@@ -16,20 +16,20 @@ const EnterAiName = ({ onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("submitting")
     try {
-        const username = sessionStorage.getItem('username'); 
-        const requestBody = JSON.stringify({ 
-            projectName: `${username}${aiName}` 
-          });
-        console.log("requestBody")
-        console.log(requestBody);
-        const response = await api().post(`/projects/create/${username}`,requestBody,{
-            withCredentials: true});         
+      const username = sessionStorage.getItem('username'); 
+      const concatProjectName = `${username}${projectName}`;  
+      const requestBody = JSON.stringify({ projectName:concatProjectName });
+      
+      const response = await api().post(`/projects/create/${username}`, requestBody, {
+        withCredentials: true
+      });
+
       if (response.data.exists) {
         setErrorMessage('This name is already taken');
       } else {
-        // Handle success - close the popup
+        // On success, navigate to the project page
+        navigate(`/projects/${projectName}`);
         onClose();
       }
     } catch (error) {
@@ -41,16 +41,16 @@ const EnterAiName = ({ onClose }) => {
   return (
     <div className='dialog-content'>
       <Dialog open={true} onClose={handleClose} fullWidth maxWidth="sm">
-      <DialogTitle className="dialog-title">My Dialog Title</DialogTitle>
+        <DialogTitle className="dialog-title">Name your Project</DialogTitle>
 
         <form onSubmit={handleSubmit}> {/* Wrap content in a form */}
           <DialogContent>
             <TextField
               autoFocus
               className="text-field"
-              label="AI Name"
-              value={aiName}
-              onChange={(e) => setAiName(e.target.value)}
+              label="Project Name"
+              value={projectName}
+              onChange={(e) => setProjectName(e.target.value)}
               helperText={errorMessage}
               error={!!errorMessage}
               placeholder="Enter a name for the project"
@@ -60,7 +60,7 @@ const EnterAiName = ({ onClose }) => {
             <Button
               variant="contained"
               color="primary"
-              type="submit" // This allows "Enter" to submit the form
+              type="submit" 
             >
               Submit
             </Button>
@@ -74,5 +74,4 @@ const EnterAiName = ({ onClose }) => {
   );
 };
 
-
-export default EnterAiName;
+export default Project;

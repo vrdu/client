@@ -23,7 +23,7 @@ const AppRouter = () => {
                     }
                     />
                 <Route
-                    path="/configureLabels"
+                    path="/projects:projectName"
                     element={
                         <ProtectedRoute>
                         <ConfigureLabels/>

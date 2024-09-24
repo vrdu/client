@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import '../styling/home.css';  
 import { Button} from '@mui/material';
 import { Link} from 'react-router-dom';
-import EnterAiName from '../views/enterAiName';
+import Project from './project';
 
 const ConfigureLabels = () => {
   const [popupVisible, setPopupVisible] = useState(true);
@@ -13,7 +13,7 @@ const ConfigureLabels = () => {
 
   return (
     <div>
-    {popupVisible && <EnterAiName onClose={handleClosePopup} />}
+    {popupVisible && <Project onClose={handleClosePopup} />}
     {!popupVisible && (
       <div>
         <div className="blob">
