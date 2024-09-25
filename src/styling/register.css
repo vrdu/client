@@ -40,6 +40,25 @@ html, body {
   display: flex;
   flex-direction: column;
   gap: 5px;
+  background-color: white !important;
 }
+
+.inputContainer .MuiOutlinedInput-root {
+  border-radius: 2px;
+  fieldset {
+    border-color: black !important; /* Default outline */
+  }
+
+  &:hover fieldset {
+    border-color: black !important; /* Outline on hover */
+  }
+
+  &.Mui-focused fieldset {
+    border-color: black !important; /* Outline when focused */
+  }
+}
+
+
+
   
     

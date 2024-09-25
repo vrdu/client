@@ -68,9 +68,10 @@ function LoginForm() {
   return (
     <div className="container">
     <Container maxWidth="sm" >
-      <Box component="h4" sx={{ fontSize: '2rem', fontWeight: 'bold' }}>
-      Login
-      </Box>
+    <Box component="h4" sx={{ fontSize: '2rem', fontWeight: 'bold', marginTop: 0 }}>
+    Login
+    </Box>
+
       <form onSubmit={Login} className="form">
       <div className="inputContainer">  
           <TextField

@@ -6,6 +6,7 @@ import {api } from '../helpers/api';
 import '../styling/register.css';
 
 
+
 function RegisterForm() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
@@ -67,9 +68,10 @@ function RegisterForm() {
   return (
     <div className="container">
     <Container maxWidth="sm">
-      <Box component="h4" sx={{ fontSize: '2rem', fontWeight: 'bold' }}>
-      Register
-      </Box>
+    <Box component="h4" sx={{ fontSize: '2rem', fontWeight: 'bold', marginTop: 0, paddingTop: '5px' }}>
+      Login
+    </Box>
+
       <form onSubmit={Register} className="form">
       <div className="inputContainer">  
           <TextField
@@ -82,6 +84,7 @@ function RegisterForm() {
             }
             required
             sx={{
+              
               label: {
                 color: 'text.primary',  
               }
@@ -101,7 +104,7 @@ function RegisterForm() {
             required
             sx={{
               label: {
-                color: 'text.primary', 
+                color: 'text.primary',  
               }
             }}
           />
