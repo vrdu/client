@@ -16,6 +16,7 @@ const Project = ({ onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
       const username = sessionStorage.getItem('username'); 
       const concatProjectName = `${username}${projectName}`;  
@@ -29,7 +30,8 @@ const Project = ({ onClose }) => {
         setErrorMessage('This name is already taken');
       } else {
         // On success, navigate to the project page
-        navigate(`/projects/${projectName}`);
+        sessionStorage.setItem('projectName', projectName);
+        navigate(`/projects/${projectName}/configureLabels`);
         onClose();
       }
     } catch (error) {

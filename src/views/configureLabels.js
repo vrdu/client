@@ -12,9 +12,7 @@ const ConfigureLabels = () => {
   };
 
   return (
-    <div>
-    {popupVisible && <Project onClose={handleClosePopup} />}
-    {!popupVisible && (
+    
       <div>
         <div className="blob">
         <h1 className="heading">Configure Labels</h1>
@@ -32,8 +30,8 @@ const ConfigureLabels = () => {
       </div>
         <h1>AI Configurations</h1>
       </div>
-    )}
-  </div>
+    
+
       
     
   );

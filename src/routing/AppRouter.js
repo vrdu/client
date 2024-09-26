@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import RegisterForm from '../views/register';
 import LoginForm from '../views/login';
 import Home from '../views/home';
+import Project from '../views/project';
 import ConfigureLabels from '../views/configureLabels';
 import UploadInstructionDocuments from '../views/uploadInstructionDocuments';
 import ProtectedRoute from './ProtectedRoute';
@@ -23,7 +24,15 @@ const AppRouter = () => {
                     }
                     />
                 <Route
-                    path="/projects:projectName"
+                    path="/project"
+                    element={
+                        <ProtectedRoute>
+                        <Project/>
+                        </ProtectedRoute>
+                    }
+                    />
+                <Route
+                    path="/projects/:projectName/configureLabels"
                     element={
                         <ProtectedRoute>
                         <ConfigureLabels/>

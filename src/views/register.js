@@ -69,7 +69,7 @@ function RegisterForm() {
     <div className="container">
     <Container maxWidth="sm">
     <Box component="h4" sx={{ fontSize: '2rem', fontWeight: 'bold', marginTop: 0, paddingTop: '5px' }}>
-      Login
+      Register
     </Box>
 
       <form onSubmit={Register} className="form">
