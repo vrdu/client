@@ -8,12 +8,14 @@
   background-color: var(--background); /* Using CSS variable for background */
   text-align: center;
   color: var(--text-primary); /* Assuming a CSS variable for text color */
+  outline: var(--blue) !important;
 }
 
 .form {
   display: flex;
   flex-direction: column;
   gap: 15px; /* Fixing gap value with 'px' */
+  outline: var(--blue) !important;
 }
 
 .buttonContainer {
@@ -28,6 +30,7 @@
   flex-direction: column;
   gap: 5px;
   background-color: white !important; 
+  outline: var(--blue) !important;
 }
   
     
