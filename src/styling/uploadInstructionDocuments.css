@@ -52,6 +52,41 @@
     border-radius: 50%;
     padding: 5px;
   }
+  .li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid var(--blue);
+    border-radius: 5px;
+    padding: 5px;
+    margin-bottom: 5px;
+    position: relative;
+    background-color: white;
+  }
+  /* Add this to your CSS file */
+.upload-status {
+  position: relative;
+  display: inline-block;
+}
+
+.upload-status .upload-text {
+  visibility: hidden; /* Hidden by default */
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 120%; /* Position to the right of the checkmark */
+  background-color: white;
+  padding: 5px;
+  border-radius: 5px;
+  color: black;
+  font-size: 14px;
+}
+
+.upload-status:hover .upload-text {
+  visibility: visible; /* Show the text when hovering */
+}
+
+  
   
   
   

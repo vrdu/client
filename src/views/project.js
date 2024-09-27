@@ -18,9 +18,8 @@ const Project = ({ onClose }) => {
     e.preventDefault();
 
     try {
-      const username = sessionStorage.getItem('username'); 
-      const concatProjectName = `${username}${projectName}`;  
-      const requestBody = JSON.stringify({ projectName:concatProjectName });
+      const username = sessionStorage.getItem('username');  
+      const requestBody = JSON.stringify({ projectName });
       
       const response = await api().post(`/projects/create/${username}`, requestBody, {
         withCredentials: true
