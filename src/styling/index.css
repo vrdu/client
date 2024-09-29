@@ -3,6 +3,8 @@
   --red:#FF0000;
   --shadeDarker:#D6D6D6;
   --black:#000000;
+  --labels: #B4A7E7;
+  --labelsBackground: #E3DAF5;
 }
 
 body {
@@ -26,6 +28,12 @@ body {
 }
 .black {
   color: var(--black);
+}
+.labels{
+  color: var(--labels)
+}
+.labelsBackground{
+  color: var(--labelsBackground)
 }
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',

@@ -1,0 +1,202 @@
+.document-placeholder-container {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+    
+    .document-container {
+      position: relative;
+      border: 1px solid var(--blue);
+      background-color: #f0f8ff;
+      resize: both;
+      overflow: hidden;
+      width: 400px;
+      height: 600px;
+    }
+    
+    .document-wrapper {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .document-controls {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    
+    
+    .dropzone {
+      border: 2px dashed var(--blue);
+      background-color: #e0e0e0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .zoom-controls {
+      margin-top: 10px;
+      display: flex;
+      justify-content: flex-start;
+    }
+    
+    .zoom-controls button {
+      margin: 5px;
+    }
+    
+    .placeholder {
+      flex: 1;
+      border: 1px solid var(--blue);
+      margin-left: 20px;
+      background-color: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .right-placeholder {
+      flex: 1;
+      min-height: 500px;
+      padding: 20px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .top-section {
+      position: relative;
+      flex: 0 1 auto; /* Top section will take the space needed for the button */
+    }
+    
+    .bottom-section {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .import-button {
+      position: relative;
+      margin: 10px;
+    }
+    
+.left-container {
+  flex: 1;
+  margin-right: 20px;
+}
+    .button-container {
+      margin-top: 20px;
+    }
+    
+    .content-container {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    .add-label-family-button {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 8px 16px;
+      background-color: var(--blue)!important;
+      color: white !important;
+      text-transform: none; /* To keep text capitalization as it is */
+      border: 1px solid var(--blue);
+    }
+    
+    .add-label-family-button:hover {
+      background-color: var(--blue);
+      
+    }
+    
+    .add-label-family-button .MuiSvgIcon-root {
+      font-size: 18px; /* Smaller plus icon */
+      margin-right: 8px; /* Space between icon and text */
+    }
+    .form-container {
+      display: flex;
+      flex-direction: column;
+      max-width: 400px;
+      position: relative; /* Ensure form container doesn't overlap with heading */
+    }
+    
+    .form-heading {
+      margin-bottom: 5px; /* Add space below heading */
+      margin-top: 0px; /* Adjust this value as needed */
+      padding-top: 0px; /* You can adjust padding too if necessary */
+      
+    }
+    
+    .label-name-field, .label-description-field {
+      background-color: white;
+    }
+    
+    .label-name-field {
+      padding: 10px; /* Ensure text field has padding */
+      margin-bottom: 10px !important;
+    }
+    
+    .label-description-field {
+      padding: 10px;
+      margin-top: 10px;
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: space-between; /* Spreads the buttons evenly */
+      align-items: center; /* Aligns the buttons vertically in the middle */
+      gap: 10px; /* Adds space between the buttons */
+      width: 100%; /* Takes up the full width of the parent container */
+      box-sizing: border-box; /* Ensures padding is included in the total width */
+    }
+    .half-width-button {
+      width: 48%; /* 48% width to leave room for the gap between buttons */
+      display: inline-block; /* Ensure buttons are inline elements */
+      box-sizing: border-box; /* Include padding in width */
+      
+    }
+
+
+    /*Here comes the styling of the labels*/
+    .form-container {
+      padding: 10px;
+    }
+    
+    .label-inputs {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .label-name-field {
+      flex: 1;
+    }
+    
+    .label-description-field {
+      flex: 2;
+    }
+    
+    .button-container {
+      margin-top: 10px;
+    }
+    
+    .submitted-label-families {
+      margin-top: 20px;
+    }
+    
+    .label-box {
+      border: 1px solid black;
+      padding: 0px;
+      margin-bottom: 2px;
+      background-color: #f5f5f5;
+      border-radius: 2px;
+    }
+    
+    
+    
+    
+    
+    
+    
