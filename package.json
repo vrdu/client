@@ -15,6 +15,7 @@
     "dropzone": "^6.0.0-beta.2",
     "pdfjs-dist": "^4.6.82",
     "react": "^18.3.1",
+    "react-beautiful-dnd": "^13.1.1",
     "react-dom": "^18.3.1",
     "react-dropzone": "^14.2.3",
     "react-pdf-viewer": "^0.1.0",

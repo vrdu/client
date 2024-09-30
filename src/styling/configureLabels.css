@@ -193,10 +193,25 @@
       background-color: #f5f5f5;
       border-radius: 2px;
     }
+    .label-family {
+      display: flex;
+      flex-direction: column;
+      border: 1px solid black;  /* Black outline */
+      padding: 10px;
+      border-radius: 5px; /* Optional: for rounded corners */
+      margin-bottom: 10px;
+    }
+    .label-list {
+      margin-top: 5px; /* Space between label family button and labels list */
+      margin-left: 25px;
+    }
     
-    
-    
-    
+    .label {
+      border: 1px solid grey;  /* Style for each individual label */
+      padding: 5px;
+      margin-top: 5px;
+      border-radius: 5px;
+    }
     
     
     

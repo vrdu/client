@@ -17,10 +17,12 @@ html, body {
   min-width: 400px;       
   padding: 40px;
   background-color: var(--shadeDarker) !important;
-  border-radius: 20px;
+  border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
   box-sizing: border-box;
+  max-height: 80vh;
+  overflow-y: auto;
 }
 
 
