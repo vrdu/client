@@ -31,11 +31,13 @@
     .dropzone {
       border: 2px dashed var(--blue);
       background-color: #e0e0e0;
-      width: 100%;
       height: 100%;
       display: flex;
       justify-content: center;
       align-items: center;
+      max-width: 80%; 
+      max-height: 100%; 
+      flex-shrink: 1;
     }
     
     .zoom-controls {
@@ -59,11 +61,17 @@
     }
     .right-placeholder {
       flex: 1;
-      min-height: 500px;
       padding: 20px;
       position: relative;
       display: flex;
       flex-direction: column;
+      flex-wrap: nowrap; 
+      max-width: 100%;
+    }
+    .right-placeholder > * {
+      max-width: 100%; 
+      flex-shrink: 1;  
+      box-sizing: border-box; 
     }
     
     .top-section {
@@ -92,9 +100,18 @@
     }
     
     .content-container {
+      flex-grow: 1;
       display: flex;
       justify-content: space-between;
+      flex-direction: row;
+      align-items: flex-start;
       flex-wrap: wrap;
+      width: auto;
+
+    }
+    .content-container > * {
+      flex-shrink: 1; /* Allow items to shrink if necessary */
+      min-width: 0; /* Prevent children from expanding beyond the parent */
     }
     .add-label-family-button {
       display: flex;
@@ -132,6 +149,8 @@
     
     .label-name-field, .label-description-field {
       background-color: white;
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
     
     .label-name-field {
@@ -183,11 +202,13 @@
     }
     
     .submitted-label-families {
+      display: flex;
+      flex-direction: column;
       margin-top: 20px;
     }
     
     .label-box {
-      border: 1px solid black;
+      
       padding: 0px;
       margin-bottom: 2px;
       background-color: #f5f5f5;
@@ -195,11 +216,13 @@
     }
     .label-family {
       display: flex;
+      flex-grow: 1; 
       flex-direction: column;
       border: 1px solid black;  /* Black outline */
       padding: 10px;
       border-radius: 5px; /* Optional: for rounded corners */
       margin-bottom: 10px;
+      color: black !important;  
     }
     .label-list {
       margin-top: 5px; /* Space between label family button and labels list */
@@ -207,11 +230,102 @@
     }
     
     .label {
-      border: 1px solid grey;  /* Style for each individual label */
+      border: 1px solid red !important;  /* Style for each individual label */
       padding: 5px;
       margin-top: 5px;
       border-radius: 5px;
     }
+
+    /* Styling for the label family thingies*/
+    .label-family-container{
+      flex-grow: 1;
+      display: flex;
+      flex-direction: row;
+      gap: 5px !important;
+      color: black !important;
+      width: 100%; 
+      max-width: 100%;
+    }
+    .label-family-name {
+      margin-top: 0px;
+      flex-grow: 1;
+      white-space: nowrap;
+      
+      text-overflow: ellipsis;
+
+    }
+    .family-container{
+      margin-top: 4px;
+      width: 100%;
+      white-space: normal; /* Allow text to wrap */
+      overflow-wrap: break-word; /* Force word breaks if necessary */
+      word-wrap: break-word;
+    }
+
+    /* styling of the label names in the label thingies */
+    .label-header {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      justify-content: flex-start;
+      
+    }
+    .label-name {
+      margin: 0;
+      padding: 0;
+      line-height: 1.2;
+      display: flex;
+      align-items: flex-start;
+      flex-direction: column;
+      justify-content: flex-start;
+      color: black;
+    }
+    .custom-label-name-distance {
+      display: inline-block;
+      margin-top: 0px;
+      white-space: normal; /* Allow text to wrap */
+      
+      max-width: 35%;
+    }
+    
+    .label-description {
+      display: flex;
+      margin-top: 0;
+      padding: 0;
+      white-space: normal; /* Allow text to wrap */
+      overflow-wrap: break-word; /* Force word breaks if necessary */
+      word-wrap: break-word;
+      
+    }
+
+    .label-description-container {
+      margin: 0;
+      padding: 0;
+      text-align: left !important;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      padding-top: 10px ;
+      color: black !important;
+      white-space: normal; /* Allow text to wrap */
+      overflow-wrap: break-word; /* Force word breaks if necessary */
+      word-wrap: break-word;
+      
+    }
+    
+
+    .label-container {
+      display: flex;
+      flex-grow: 1; 
+      flex-direction: column;
+      border: 1px solid black;  /* Black outline */
+      padding: 10px;
+      border-radius: 5px; /* Optional: for rounded corners */
+      margin-bottom: 10px;
+      color: black !important;  
+    }
+    
     
     
     

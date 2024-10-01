@@ -1,4 +1,4 @@
-class aii {
+class ai {
     constructor(data = {}) {
       this.name = null;
       this.F1 = null;

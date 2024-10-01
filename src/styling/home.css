@@ -11,18 +11,21 @@ html, body {
 
 .blob {
   display: flex;
-  flex-direction: column; 
-  align-items: center;    
+  flex-direction: column; /* Ensure children are placed side by side */
+  justify-content: space-between; /* Ensure space between children */
+  align-items: center; /* Vertically align the children */
   width: auto;
-  min-width: 400px;       
-  padding: 40px;
+  min-width: 550px;       
+  padding: 20px;
   background-color: var(--shadeDarker) !important;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
   box-sizing: border-box;
   max-height: 80vh;
+  max-width: 80vd;
   overflow-y: auto;
+  overflow-x: auto;
 }
 
 

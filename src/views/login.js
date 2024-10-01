@@ -35,7 +35,6 @@ function LoginForm() {
     }
     else{
       try {
-        console.log("here")
         const requestBody = JSON.stringify({email, password});
         const response = await api(false).post('/users/login', requestBody,{
           withCredentials: true
