@@ -18,51 +18,46 @@ import label from '../models/label';
 const ConfigureLabels = () => {
   const [droppedFile, setDroppedFile] = useState(null);
   const [zoomEnabled, setZoomEnabled] = useState(false);
+
   const [open, setOpen] = useState(false);
   const [openLabel, setOpenLabel] = useState(false);
-  const [labelName, setLabelName] = useState('');
-  const [labelDescription, setLabelDescription] = useState('');
-  const [submittedLabelFamilies, setSubmittedLabelFamilies] = useState([]);
-  const [editingLabelIndex, setEditingLabelIndex] = useState(null);
-  const [labelFamilyIndex, setLabelFamilyIndex] = useState(null); // Index of label family to add label to
-  const [newLabel, setNewLabel] = useState({ name: '', description: '', descriptionShown: false });
   const [expandedLabels, setExpandedLabels] = useState({});
   const [expandedFamilies, setExpandedFamilies] = useState({});
+
+  const [activeLabelFamilyId, setActiveLabelFamilyId] = useState(null); 
+
+  const [labelName, setLabelName] = useState('');
+  const [labelDescription, setLabelDescription] = useState('');
+  const [newLabel, setNewLabel] = useState({ id: null, labelName: '', labelDescription: '', descriptionShown: false });
+  
   const [labelFamilies, setLabelFamilies] = useState([]);
-  const [activeLabelFamilyId, setActiveLabelFamilyId] = useState(null); // Track which label family is being edited
+
+  const [editingLabelId, setEditingLabelId] = useState(null);
+
+
+
+  // Track which label family is being edited
   // const [numPages, setNumPages] = useState(null);
   // const [pageNumber, setPageNumber] = useState(1);
   
   // Logic concerning the Label Families
+
   const handleAddLabelFamily = () => {
     setLabelName("");
     setLabelDescription("");
-    const newId = generateUniqueId(); 
+    const newId = generateUniqueIdLabelFamily(); 
     const newLabelFamily = new labelFamily({id: newId}); 
     setLabelFamilies((prevFamilies) => [...prevFamilies, newLabelFamily]);
     setActiveLabelFamilyId(newId); 
     setOpen(true); 
   };
 
-  const generateUniqueId = () => {
+  const generateUniqueIdLabelFamily = () => {
     return labelFamilies.length === 0 ? 1 : Math.max(...labelFamilies.map(f => f.id)) + 1;
   };
 
-  const handleSubmitLabelFamily = () => {
-    setLabelFamilies((prevFamilies) =>
-      prevFamilies.map((family) =>
-        family.id === activeLabelFamilyId
-          ? { ...family, labelFamilyName: labelName, labelFamilyDescription: labelDescription }
-          : family
-      )
-    );
-  
-    handleClose();
-  };
-
-  const handleEditLabelFamily = (id) => {
-    const familyToEdit = labelFamilies.find(family => family.id === id);
-    
+  const handleEditLabelFamily = (labelFamily, id) => {
+    const familyToEdit = labelFamilies.find(labelFamily => labelFamily.id === id);
     if (familyToEdit) {
       setLabelName(familyToEdit.labelFamilyName); // Populate the form with the current name
       setLabelDescription(familyToEdit.labelFamilyDescription); // Populate the form with the current description
@@ -79,12 +74,76 @@ const ConfigureLabels = () => {
           : family
       )
     );
-  
     // Close the dialog and reset form
     handleClose();
   };
   
+  const handleAddLabel = (labelFamily) => {
+    setNewLabel("");
+    const newId = generateUniqueIdLabel(labelFamily); 
+    const newLabel = new label({ id: newId, labelName: '', labelDescription: '' });
+    
+    setLabelFamilies((prevFamilies) =>
+      prevFamilies.map((family) =>
+        family.id === labelFamily.id
+          ? { ...family, labels: [...family.labels, newLabel] } 
+          : family
+      )
+    );
+    
+    setActiveLabelFamilyId(labelFamily.id); 
+    setOpenLabel(true); 
+  };
+
+  const generateUniqueIdLabel = (labelFamily) => {
+    return labelFamily.labels.length === 0 
+      ? 1 
+      : Math.max(...labelFamily.labels.map(label => label.id)) + 1;
+  };
   
+  const handleClose = () => {
+    // Reset input fields and close popup
+    setLabelName('');
+    setLabelDescription('');
+    setEditingLabelId(null);
+    setOpen(false);
+    setOpenLabel(false);
+    setActiveLabelFamilyId(null);
+  };
+  
+  const handleSubmitLabel = () => {
+    console.log("test");
+    setLabelFamilies((prevFamilies) =>
+      prevFamilies.map((family) => {
+        if (family.id === activeLabelFamilyId) {
+          console.log("should work")
+          return {
+            ...family,
+            labels: [...family.labels, newLabel], // Add the new label to the labels array
+          };
+        }
+        return family; // Return unchanged family for all others
+      })
+    );
+  
+    // Close the popup and reset fields
+    console.log(newLabel)
+    console.log(labelFamilies)
+    console.log(activeLabelFamilyId)
+    
+    setOpen(false);
+    setNewLabel({ labelName: '', labelDescription: '' }); // Reset the new label
+    
+  };
+  
+  
+  const handleEditLabel = (label, labelFamilyId) => {
+    setNewLabel({labelName: label.name, labelDescription: label.description}); // Set the label name for editing
+    setActiveLabelFamilyId(labelFamilyId); // Keep track of which labelFamily is being edited
+    setEditingLabelId(label.id); // Track the specific label being edited
+    setOpen(true); // Open the dialog for editing
+    
+  };
 
   // Toggle the expansion of the specific label family
   const toggleFamilyExpansion = (id, e) => {
@@ -103,11 +162,6 @@ const ConfigureLabels = () => {
         [labelIndex]: !prev[labelIndex], // Toggle the current label's expansion
       }));
     };
-
-  const handleAddLabel = (family) => {
-    setLabelFamilyIndex(family.id);
-    setOpenLabel(true); // Show popup to add label
-  };
 
   const onDrop = useCallback((acceptedFiles) => {
     if (acceptedFiles.length > 0) {
@@ -133,41 +187,7 @@ const ConfigureLabels = () => {
     onDrop,
     accept: '.pdf', // You can limit to specific file types
   });
-
-  
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-  
-  const handleClose = () => {
-    // Reset input fields and close popup
-    setLabelName('');
-    setLabelDescription('');
-    setEditingLabelIndex(null);
-    setOpen(false);
-    setOpenLabel(false);
-    setActiveLabelFamilyId(null);
-  };
-  
-  const handleSubmitLabel = () => {
-    const updatedLabelFamilies = [...submittedLabelFamilies];
-    
-    // Ensure the labelFamilyIndex is valid
-    if (labelFamilyIndex !== null && updatedLabelFamilies[labelFamilyIndex]) {
-      updatedLabelFamilies[labelFamilyIndex].labels.push(newLabel); // Add the new label
-      setSubmittedLabelFamilies(updatedLabelFamilies); // Update state
-    }
-    
-    setOpen(false); // Close popup
-    setNewLabel({ name: '', description: '' }); // Reset input fields
-  };
-  
-  const handleEditLabel = (label, family) => {
-    setLabelName(label.name);  // Set the clicked label's name and description
-    setLabelDescription(label.description);
-    setEditingLabelIndex(family.id); // Track which label is being edited
-    setOpen(true); // Open the popup
-  };
+ 
   
 
   return (
@@ -262,7 +282,7 @@ const ConfigureLabels = () => {
             </div>
             {/*pop-up for adding new label */}
             <Dialog open={openLabel} onClose={handleClose}>
-              <DialogTitle>{editingLabelIndex !== null ? 'Edit Label' : 'Add New Label'}</DialogTitle>
+              <DialogTitle>{editingLabelId !== null ? 'Edit Label' : 'Add New Label'}</DialogTitle>
                 <DialogContent>
                   {/* Content inside pop-up */}
                   <div className="form-container">
@@ -273,7 +293,7 @@ const ConfigureLabels = () => {
                       variant="outlined"
                       className="label-name-field"
                       value={newLabel.name}
-                      onChange={(e) => setNewLabel({ ...newLabel, name: e.target.value })}
+                      onChange={(e) => setNewLabel({ ...newLabel, labelName: e.target.value })}
                       fullWidth={false}
                       size="small" 
                     />
@@ -285,7 +305,7 @@ const ConfigureLabels = () => {
                       className="label-description-field"
                       multiline
                       value={newLabel.description}
-                      onChange={(e) => setNewLabel({ ...newLabel, description: e.target.value })}
+                      onChange={(e) => setNewLabel({ ...newLabel, labelDescription: e.target.value })}
                       rows = {4}
                     />
                   
@@ -353,10 +373,10 @@ const ConfigureLabels = () => {
                 {/* Display the list of labels under each label family */}
                 <div className="label-list">
                   {family.labels.length > 0 && (
-                    family.labels.map((label, labelIndex) => (
-                      <div key={labelIndex}>
+                    family.labels.map((label) => (
+                      <div key={label.id}>
                         <Button
-                          onClick={() => handleEditLabel(label, labelIndex)} // Function to handle editing the label
+                          onClick={() => handleEditLabel(label, family.id)} // Pass the label and labelFamily's id to handle editing
                           className="label-button"
                           variant="outlined"
                           fullWidth
@@ -365,43 +385,39 @@ const ConfigureLabels = () => {
                           <div className="label-header">
                             <div className="label-name"> 
                               <p>
-                                <strong class="nowrap">Label name:</strong><br />
+                                <strong className="nowrap">Label name:</strong><br />
                                 <span className="custom-label-name-distance">{label.name}</span>
                               </p>
                             </div>
 
-                            
                             <div className="label-description-container" style={{ textAlign: 'left' }}>
                               <Button
                                 variant="text"
-                                onClick={(e) => toggleLabelExpansion(labelIndex, e)} // Toggle description visibility
-                                endIcon={expandedLabels[labelIndex] ? <ExpandLessIcon /> : <ExpandMoreIcon />} // Toggle icon
-                                style={{ padding: '0', margin: '0', textAlign: 'left', color: 'black', whiteSpace: 'nowrap', flexGrow: 1,textAlign: 'left' }}
+                                onClick={(e) => toggleLabelExpansion(label.id, e)} // Toggle description visibility by label's id
+                                endIcon={expandedLabels[label.id] ? <ExpandLessIcon /> : <ExpandMoreIcon />} // Toggle icon based on label's id
+                                style={{ padding: '0', margin: '0', textAlign: 'left', color: 'black', whiteSpace: 'nowrap', flexGrow: 1, textAlign: 'left' }}
                               >
-                                {expandedLabels[labelIndex] ? <strong>Label description:</strong>: <strong>Label description</strong>}
+                                {expandedLabels[label.id] ? <strong>Label description:</strong> : <strong>Label description</strong>}
                               </Button>
                               
-                              {expandedLabels[labelIndex] && (
+                              {expandedLabels[label.id] && (
                                 <div className="label-description">
-                                  {label.description}
+                                  {label.description || 'No description available'}
                                 </div>
                               )}
-
                             </div>
-                              
                           </div>
                         </Button>
-
-                      
                       </div>
-                      ))
-                    )}
+                    ))
+                  )}
                 </div>
+
 
                   {/* Add label button */}
                   <Button 
                     variant="contained" 
-                    onClick={() => handleAddLabel(family.id)}  // Trigger add label popup
+                    onClick={() => handleAddLabel(family)}  // Trigger add label popup
                     style={{ alignSelf: 'flex-start', marginLeft: '0px' }}
                     >
                     + Add Label
