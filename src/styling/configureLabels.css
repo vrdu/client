@@ -261,6 +261,13 @@
       overflow-wrap: break-word; /* Force word breaks if necessary */
       word-wrap: break-word;
     }
+    .custom-label-name-distance {
+      display: inline-block;
+      margin-top: 0px;
+      white-space: normal; /* Allow text to wrap */
+      
+      max-width: 35%;
+    }
 
     /* styling of the label names in the label thingies */
     .label-header {
@@ -272,20 +279,21 @@
       
     }
     .label-name {
-      margin: 0;
-      padding: 0;
+      margin-right: 5px;
+      padding-right: 10px;
       line-height: 1.2;
       display: flex;
       align-items: flex-start;
       flex-direction: column;
       justify-content: flex-start;
       color: black;
+      min-width: 101px;
     }
-    .custom-label-name-distance {
+    
+    .custom-label-name-label-description{
       display: inline-block;
-      margin-top: 0px;
+      margin-top: 8px;
       white-space: normal; /* Allow text to wrap */
-      
       max-width: 35%;
     }
     
