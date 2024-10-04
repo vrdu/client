@@ -30,7 +30,9 @@ const Home = () => {
       <div className="projects-list">
           {projects.length > 0 ? (
             projects.map((project, index) => (
-              <Link to={`/projects/${project.projectName}/configureLabels`} key={index} style={{ textDecoration: 'none' }}>
+              <Link to={`/projects/${project.projectName}/configureLabels`} key={index} style={{ textDecoration: 'none' }}
+              onClick={() => {sessionStorage.setItem('projectName', project.projectName); console.log("sessionStorage updated")}}
+              >
                 <div className="project clickable">
                   <span className="project-name">{project.projectName}</span>
                   <div className="project-metrics">
