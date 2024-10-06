@@ -6,7 +6,6 @@ import { Link } from 'react-router-dom';
 import { useDropzone } from 'react-dropzone';
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch"; // For zooming functionality
 import AddIcon from '@mui/icons-material/Add';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
