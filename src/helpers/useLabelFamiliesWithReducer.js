@@ -19,13 +19,15 @@ const labelFamiliesReducer = (state, action) => {
                 ...family, 
                 labelFamilyName: action.payload.labelFamilyName, 
                 labelFamilyDescription: action.payload.labelFamilyDescription, 
-                register: true // Set 'register' to true for the updated family
+                register: true, // Set 'register' to true for the updated family
+                inUse: false
               }
             : { 
                 ...family, 
                 register: false // Set 'register' to false for all other families
               }
         );
+        
       }
 
       // If family doesn't exist, add it and set all others' register to false
