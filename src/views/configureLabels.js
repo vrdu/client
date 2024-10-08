@@ -35,10 +35,10 @@ const ConfigureLabels = () => {
   const [editingLabelId, setEditingLabelId] = useState(null); //editing
   const [addingLabelId, setAddingLabelId] = useState(null); //adding
 
-  const [newLabel, setNewLabel] = useState({ id: null, labelName: '', labelDescription: '', descriptionShown: false });
+  const [newLabel, setNewLabel] = useState({ id: null, labelName: '', labelDescription: '', register: true, descriptionShown: false });
   //used to store the label families (and their labels) 
-  const { labelFamilies, addOrUpdateLabelFamily, addOrUpdateLabel } = useLabelFamiliesWithReducer();
-  const [newLabelFamily, setNewLabelFamily] = useState({id: null, index: null, labelFamilyName: '', labelFamilyDescription: '', labels: []});
+  const {labelFamilies, addLabelFamily, updateLabelFamily, addOrUpdateLabel } = useLabelFamiliesWithReducer();
+  const [newLabelFamily, setNewLabelFamily] = useState({id: null, index: null, labelFamilyName: '', oldLabelFamilyName: '',register: true, labelFamilyDescription: '', labels: []});
 
   // Error handling
   const [alertStatus, setAlertStatus] = useState(false);
@@ -49,6 +49,20 @@ const ConfigureLabels = () => {
 //load all labels when loading the website
 
 const sendLabelFamiliesToBackend = async () => {
+  //e.preventDefault();
+  try {
+    if (addedLabelFamilyId !== null) {
+      await addLabelFamily(newLabelFamily);  // Wait for this to finish
+    } else {
+      await updateLabelFamily(newLabelFamily);  // Wait for this to finish
+    }
+    
+    // After the promise resolves, call handleClose
+    console.log("labelFamilies after Await: ", labelFamilies);
+    handleClose();
+  } catch (error) {
+    console.error("Error updating or adding label family:", error);
+  }
   console.log("labelFamilies: ");
   try {
     const username = sessionStorage.getItem('username');
@@ -76,21 +90,21 @@ const raiseError = (error) => {
 
 //when deleting a label, make a delete request to backend
 //hook to send the data to the backend at the right time:
-
+/*
 useEffect(() => {
   if (newLabel.id === null && newLabelFamily.id === null && labelFamilies.length > 0 && open ===false && openLabel === false) {
-    console.log("useEffect");
+
     sendLabelFamiliesToBackend();
   }
 }, [labelFamilies, newLabel, newLabelFamily]);  
 
-
+*/
 
   // Logic concerning the Label Families
   const handleAddLabelFamily = () => {
     const newId = generateUniqueIdLabelFamily(); 
     const newIndex = labelFamilies.length;
-    const newLabelFamily = new labelFamily({id: newId, index: newIndex, labelFamilyName: '', labelFamilyDescription: '', labels: []}); 
+    const newLabelFamily = new labelFamily({id: newId, index: newIndex, labelFamilyName: '', oldLabelFamilyName: '', labelFamilyDescription: '',register:true, labels: []}); 
     setNewLabelFamily(newLabelFamily);
     setAddedLabelFamilyId(newId); 
     setOpen(true); 
@@ -100,45 +114,57 @@ useEffect(() => {
     return labelFamilies.length === 0 ? 1 : Math.max(...labelFamilies.map(f => f.id)) + 1;
   };
 
-  const handleEditLabelFamily = (labelFamily, id) => {
+  const handleEditLabelFamily = (id) => {
     const familyToEdit = labelFamilies.find(labelFamily => labelFamily.id === id);
     if (familyToEdit) {
-      setNewLabelFamily({labelFamilyName: familyToEdit.labelFamilyName, labelFamilyDescription: familyToEdit.labelFamilyDescription});
+      setNewLabelFamily({oldLabelFamilyName: familyToEdit.labelFamilyName, labelFamilyName: familyToEdit.labelFamilyName, labelFamilyDescription: familyToEdit.labelFamilyDescription, register: false, labels: familyToEdit.labels});
       setActiveLabelFamilyId(id); // Track the ID of the label family being edited
       setOpen(true); // Open the dialog
+      console.log(open)
     }
   };
-
-
-  const handleSubmitEditFamily = () => {
+  const handleSubmitEditFamily = async (e) => {
+    e.preventDefault(); // Prevent form submission from refreshing the page
+  
+    // Make sure the submission happens after this block completes
     const labelFamilyId = activeLabelFamilyId !== null ? activeLabelFamilyId : addedLabelFamilyId;
     
     if (labelFamilyId !== null && newLabelFamily) {
-
       console.log("dispatching label family:", newLabelFamily);
-
-      addOrUpdateLabelFamily(newLabelFamily);  
+      
+      try {
+        if (addedLabelFamilyId !== null) {
+          // Adding a new label family
+          await addLabelFamily(newLabelFamily); // Ensures this operation finishes first
+        } else {
+          // Editing an existing label family
+          await updateLabelFamily(newLabelFamily); // Ensures this operation finishes first
+        }
+        
+        console.log("Label family updated successfully");
+  
+        // Perform updates that should happen right after the submission
+        handleClose(); // Close the dialog
+        sendLabelFamiliesToBackend(); // Send updated data to the backend
+      } catch (error) {
+        console.error("Error updating or adding label family:", error);
+      }
     }
-    
-
-    handleClose();
-    
   };
+  
   
   //Editing labels
   const handleAddLabel = (labelFamily) => {
     const newId = generateUniqueIdLabel(labelFamily); 
     const newIndex = labelFamily.labels.length;
-    const newLabel = new label({ id: newId, labelName: '', labelDescription: '', index: newIndex });
+    const newLabel = new label({ id: newId, labelName: '', labelDescription: '', index: newIndex, register: true });
     addOrUpdateLabel(labelFamily.id, newLabel);  // Add or update a label within a family
-    console.log("newId in handleAddLabel" + newId);
+    //console.log("newId in handleAddLabel" + newId);
     setActiveLabelFamilyId(labelFamily.id); 
     setAddingLabelId(newId);
     setOpenLabel(true); 
   };
     
-  
-
   const generateUniqueIdLabel = (labelFamily) => {
     return labelFamily.labels.length === 0 
       ? 1 
@@ -146,20 +172,16 @@ useEffect(() => {
   };
   
   const handleClose = () => {
-    setNewLabelFamily({ id: null, labelFamilyName: '', labelFamilyDescription: '', labels: [] });
+    setNewLabelFamily({ id: null, labelFamilyName: '', labelFamilyDescription: '', register: true, labels: [] });
     setNewLabel({ id: null, labelName: '', labelDescription: '', descriptionShown: false, index: null }); 
     setEditingLabelId(null);
     setOpen(false);
     setOpenLabel(false);
     setActiveLabelFamilyId(null);
     setAddedLabelFamilyId(null);
-    console.log("handleClose");
-    console.log("newLabelId: "+newLabel.id)
-    console.log("newLabelFamilyId: "+newLabelFamily.id)
-    console.log("length of labelFamilies: "+labelFamilies.length)
+
   };
 
-  
   const handleSubmitLabel = () => {
     const labelId = addingLabelId !== null ? addingLabelId : editingLabelId;
   
@@ -180,7 +202,6 @@ useEffect(() => {
     handleClose();
 
   };
-  
   
   const handleEditLabel = (label, labelFamilyId) => {
     setNewLabel({ id: label.id, labelName: label.labelName, labelDescription: label.labelDescription, descriptionShown: false}); // Set the label name for editing
@@ -279,6 +300,7 @@ useEffect(() => {
             {/* Pop-up Dialog For adding new LabelFamilies*/}
             <Dialog open={open} onClose={handleClose}>
             <DialogTitle>{activeLabelFamilyId  !== null ? 'Edit Label Family' : 'Add New Label Family'}</DialogTitle>
+            <form onSubmit={handleSubmitEditFamily}>
               <DialogContent>
                 {/* Content inside pop-up */}
                 <div className="form-container">
@@ -289,7 +311,7 @@ useEffect(() => {
                     variant="outlined"
                     className="label-name-field"
                     value={newLabelFamily.labelFamilyName}
-                    onChange={(e) => setNewLabelFamily({ ...newLabelFamily, labelFamilyName: e.target.value })}
+                    onChange={(e) => {setNewLabelFamily({ ...newLabelFamily, labelFamilyName: e.target.value })}}
                     fullWidth={false}
                     size="small" 
                   />
@@ -311,7 +333,6 @@ useEffect(() => {
                     <div className="button-container">
                       <Button 
                       variant="contained" 
-                      onClick={handleSubmitEditFamily}
                       style={{ marginTop: '20px' }}
                       type="submit" 
                     >
@@ -323,6 +344,7 @@ useEffect(() => {
                     </div>
                   </div>
                       </DialogContent>
+                      </form>
                     </Dialog>
             </div>
             {/*pop-up for adding new label */}
@@ -378,7 +400,7 @@ useEffect(() => {
               <div className="label-family" key={newLabelFamily.index}>  {/* Wrapper for each label family */}
                 <Button
 
-                  onClick={() => handleEditLabelFamily(labelFamily, newLabelFamily.id)}  // Open popup to edit this label family
+                  onClick={() => handleEditLabelFamily(newLabelFamily.id)}  // Open popup to edit this label family
                   className="label-box"
                   variant="outlined"
                   fullWidth

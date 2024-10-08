@@ -4,6 +4,7 @@ class label {
       this.labelName = null;
       this.labelDescription = null;
       this.index = String(data.index || '');
+      this.register = null;
       Object.assign(this, data);
     }
   }
