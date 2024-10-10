@@ -113,34 +113,34 @@ const UploadInstructionDocuments = () => {
           onMouseLeave={(e) => {
             e.currentTarget.querySelector('.close-button').style.visibility = 'hidden'; 
           }}
-        >
+          >
           <span 
-        onClick={() => handleNameClick(file.name)} 
-        style={{
-          width: clickedFile === file.name ? '100%' : '75%', 
-          whiteSpace: 'nowrap', 
-          overflow: 'hidden', 
-          textOverflow: 'ellipsis', 
-          cursor: 'pointer',
-          textAlign: 'left',
-        }}
-      >
-        {file.name}
-      </span>
+            onClick={() => handleNameClick(file.name)} 
+            style={{
+            width: clickedFile === file.name ? '100%' : '75%', 
+            whiteSpace: 'nowrap', 
+            overflow: 'hidden', 
+            textOverflow: 'ellipsis', 
+            cursor: 'pointer',
+            textAlign: 'left',
+            }}
+            >
+            {file.name}
+          </span>
           {/* Display progress or checkmark */}
           <div style={{ width: '30%', textAlign: 'center', visibility: clickedFile === file.name ? 'hidden' : 'visible' }}>
-        {loading ? (
+          {loading ? (
           <CircularProgress size={16} value={progress} />
-        ) : completed ? (
+            ) : completed ? (
           <div className="upload-status">
               <CheckCircleIcon style={{ color: 'lightgreen' }} />
               <span className="upload-text">uploaded</span>
           </div>
-        ) : null}
-      </div>
+            ) : null}
+          </div>
 
           {clickedFile !== file.name && (
-        <>
+          <>
           <span> {/* Add loading animation or checkmark here */} </span>
           <IconButton
             aria-label="delete"
@@ -162,9 +162,9 @@ const UploadInstructionDocuments = () => {
           >
             <CloseIcon style={{ color: 'white', fontSize: '12px' }} />
           </IconButton>
-        </>
-      )}
-    </li>
+          </>
+          )}
+        </li>
       );
     })
   );

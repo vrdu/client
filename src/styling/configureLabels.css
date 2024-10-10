@@ -279,9 +279,10 @@
       
     }
     .label-name {
+      padding-top: 0px;
       margin-right: 5px;
       padding-right: 10px;
-      line-height: 1.2;
+      line-height: 0.5;
       display: flex;
       align-items: flex-start;
       flex-direction: column;
@@ -333,7 +334,12 @@
       margin-bottom: 10px;
       color: black !important;  
     }
-    
-    
+    .label-container:hover {
+      background-color: rgba(0, 0, 0, 0.05); /* Transparent black background */
+      cursor: pointer; /* Change cursor to hand */
+    }
+    .label-family-container:hover .close-button {
+      visibility: visible; /* Show the button when hovering over the container */
+    }
     
     

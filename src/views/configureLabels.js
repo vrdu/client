@@ -4,26 +4,23 @@ import '../styling/configureLabels.css';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { useDropzone } from 'react-dropzone';
-import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch"; // For zooming functionality
+//import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch"; // For zooming functionality
 import AddIcon from '@mui/icons-material/Add';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import { api } from '../helpers/api';
 
+import { CloseButton } from '../components/closeButton';
 import labelFamily from '../models/labelFamily';
 import label from '../models/label';
 
 import  { useLabelFamiliesWithReducer } from '../helpers/useLabelFamiliesWithReducer';
-import { South } from '@mui/icons-material';
 console.log("useLabelFamiliesWithReducer:", useLabelFamiliesWithReducer);
 // import { Document, Page } from 'react-pdf';
 
-
-
 const ConfigureLabels = () => {
   const [droppedFile, setDroppedFile] = useState(null);
-  const [zoomEnabled, setZoomEnabled] = useState(false);
+  //const [zoomEnabled, setZoomEnabled] = useState(false);
 
   const [openAddFamily, setOpenAddFamily] = useState(false);
   const [openUpdateFamily, setopenUpdateFamily] = useState(false);
@@ -54,7 +51,6 @@ const ConfigureLabels = () => {
                                                         labels: []});
 
   // Error handling
-  const [alertStatus, setAlertStatus] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
   //console logs
@@ -77,23 +73,26 @@ const ConfigureLabels = () => {
     try {
       const username = sessionStorage.getItem('username');
       const projectName = sessionStorage.getItem('projectName');
-      await api(false).post(`/projects/${username}/${projectName}/label-families`, newLabelFamily, {
+      const response = await api(false).post(`/projects/${username}/${projectName}/label-families`, newLabelFamily, {
         withCredentials: true,  
       });
+      if (!response.data.exists){
+        setLabelFamilies((prevFamilies) => [...prevFamilies, newLabelFamily]);
+
+        handleClose();
+      }
 
     } catch (error) {
       raiseError(error.response.data.detail);
       
     }
 
-    setLabelFamilies((prevFamilies) => [...prevFamilies, newLabelFamily]);
-
-    handleClose();
+    
   };
 
   const sendUpdateLabelFamilyToBackend = async (e) => {
     e.preventDefault();
-
+    
     console.log("sendUpdatedLabelFamilyToBackend");
     setLabelFamilies((prevFamilies) => {
       const familyExists = prevFamilies.some(family => family.id === newLabelFamily.id);
@@ -114,16 +113,17 @@ const ConfigureLabels = () => {
     try {
       const username = sessionStorage.getItem('username');
       const projectName = sessionStorage.getItem('projectName');
-      await api(false).post(`/projects/${username}/${projectName}/label-families`, newLabelFamily, {
+      const response = await api(false).post(`/projects/${username}/${projectName}/label-families`, newLabelFamily, {
         withCredentials: true,  
       });
+      if (!response.data.exists){
+          handleClose();
+      }
 
     } catch (error) {
       raiseError(error.response.data.detail);
       
     }
-
-    handleClose();
   };
 
   const sendUpdateLabelToBackend = async (e) => {
@@ -157,60 +157,63 @@ const ConfigureLabels = () => {
     try {
       const username = sessionStorage.getItem('username');
       const projectName = sessionStorage.getItem('projectName');
-      await api(false).post(`/projects/${username}/${projectName}/labels`, newLabel, {
+      const response = await api(false).post(`/projects/${username}/${projectName}/labels`, newLabel, {
         withCredentials: true,  
       });
+      if (!response.data.exists){
+        handleClose();
+    }
+
 
     } catch (error) {
       raiseError(error.response.data.detail);
-      return;
     }
-
-    handleClose();
   };
 
   const sendLabelToBackend = async (e) => {
     e.preventDefault();
 
     console.log("sendLabelToBackend"+ newLabel);
-
-    labelFamilies.forEach((family) => {
-      if (family.id === newLabel.labelFamilyId) {
-        
-      }
-    });
-    const updatedLabelFamilies = labelFamilies.map((family) => {
-      if (family.labelFamilyName === newLabel.familyName) {
-        return {
-          ...family,
-          labels: [...family.labels, newLabel], 
-        };
-      }
-      return family; 
-    });
-  
-    setLabelFamilies(updatedLabelFamilies);
+    
+    
     
     try {
       const username = sessionStorage.getItem('username');
       const projectName = sessionStorage.getItem('projectName');
-      await api(false).post(`/projects/${username}/${projectName}/labels`, newLabel, {
+      const response = await api(false).post(`/projects/${username}/${projectName}/labels`, newLabel, {
         withCredentials: true,  
       });
+      if (!response.data.exists){
+        labelFamilies.forEach((family) => {
+          if (family.id === newLabel.labelFamilyId) {
+            
+          }
+        });
+        const updatedLabelFamilies = labelFamilies.map((family) => {
+          if (family.labelFamilyName === newLabel.familyName) {
+            return {
+              ...family,
+              labels: [...family.labels, newLabel], 
+            };
+          }
+          return family; 
+        });
+      
+        setLabelFamilies(updatedLabelFamilies);
 
+        handleClose();
+
+      }
     } catch (error) {
       raiseError(error.response.data.detail);
-      return;
     }
 
-    handleClose();
   };
 
   //Error handling
   const raiseError = (error) => {
     console.log("error:")
     console.log(error);
-    setAlertStatus(true);
     setErrorMessage(error)
     
   }
@@ -300,8 +303,16 @@ const ConfigureLabels = () => {
     setOpenAddLabel(false);
     setopenUpdateFamily(false);
     setOpenUpdateLabel(false);
+
+    setErrorMessage("");
   };
   
+  //Deleting of label families/labels
+  const deleteLabelFamily = (id) => {
+  }
+
+  const deleteLabel = (id) => {
+  }
   
   // Functionalities for expanding and collapsing the description of label families and labels
   const toggleFamilyExpansion = (id, e) => {
@@ -326,7 +337,7 @@ const ConfigureLabels = () => {
     if (acceptedFiles.length > 0) {
       const fileURL = URL.createObjectURL(acceptedFiles[0]); // Create a preview URL for the dropped file
       setDroppedFile(fileURL); // Update state with the URL
-      setZoomEnabled(true); // Enable zoom once a file is dropped
+      //setZoomEnabled(true); // Enable zoom once a file is dropped
       console.log(fileURL); // Log the generated URL
     }
   }, []);
@@ -350,7 +361,7 @@ const ConfigureLabels = () => {
   return (
     <div>
       {/* Pop-up Dialog For adding new LabelFamilies*/}
-      <Dialog open={openAddFamily} onClose={handleClose}>
+      <Dialog open={openAddFamily} onClose={errorMessage ? null : handleClose}>
         <DialogTitle>{ 'Add New Label Family'}</DialogTitle>
         <form onSubmit={sendLabelFamilyToBackend}>
           <DialogContent>
@@ -365,6 +376,8 @@ const ConfigureLabels = () => {
                 value={newLabelFamily.labelFamilyName|| ''}
                 onChange={(e) => {setNewLabelFamily({ ...newLabelFamily, labelFamilyName: e.target.value, register: true, inUse: true })}}
                 fullWidth={false}
+                helperText={errorMessage}
+                error={!!errorMessage}
                 size="small" 
               />
 
@@ -400,7 +413,7 @@ const ConfigureLabels = () => {
       </Dialog>
 
       {/* Pop-up Dialog For updating new LabelFamilies*/}
-      <Dialog open={openUpdateFamily} onClose={handleClose}>
+      <Dialog open={openUpdateFamily} onClose={errorMessage ? null : handleClose}>
               <DialogTitle>{ 'Update Label Family'}</DialogTitle>
               <form onSubmit={sendUpdateLabelFamilyToBackend}>
                 <DialogContent>
@@ -415,6 +428,8 @@ const ConfigureLabels = () => {
                       value={newLabelFamily.labelFamilyName|| ''}
                       onChange={(e) => {setNewLabelFamily({ ...newLabelFamily, labelFamilyName: e.target.value, register: false, inUse: true })}}
                       fullWidth={false}
+                      helperText={errorMessage}
+                      error={!!errorMessage}
                       size="small" 
                     />
 
@@ -449,7 +464,7 @@ const ConfigureLabels = () => {
               </form>
             </Dialog>
             {/*pop-up for adding new label */}
-            <Dialog open={openAddLabel} onClose={handleClose}>
+            <Dialog open={openAddLabel} onClose={errorMessage ? null : handleClose}>
               <DialogTitle>{'Add New Label'}</DialogTitle>
               <form onSubmit={sendLabelToBackend}>
                 <DialogContent>
@@ -461,6 +476,8 @@ const ConfigureLabels = () => {
                       value={newLabel.labelName|| ''}
                       onChange={(e) => setNewLabel({ ...newLabel, labelName: e.target.value, register: true})}
                       fullWidth={false}
+                      helperText={errorMessage}
+                      error={!!errorMessage}
                       size="small" 
                     />
 
@@ -491,7 +508,7 @@ const ConfigureLabels = () => {
               </form>
             </Dialog>
 
-            <Dialog open={openUpdateLabel} onClose={handleClose}>
+            <Dialog open={openUpdateLabel} onClose={errorMessage ? null : handleClose}>
               <DialogTitle>{'Update Label'}</DialogTitle>
               <form onSubmit={sendUpdateLabelToBackend}>
                 <DialogContent>
@@ -503,6 +520,8 @@ const ConfigureLabels = () => {
                       value={newLabel.labelName|| ''}
                       onChange={(e) => setNewLabel({ ...newLabel, labelName: e.target.value, register: false})}
                       fullWidth={false}
+                      helperText={errorMessage}
+                      error={!!errorMessage}
                       size="small" 
                     />
 
@@ -588,8 +607,16 @@ const ConfigureLabels = () => {
                   variant="outlined"
                   fullWidth
                   style={{ textAlign: 'left', marginBottom: '10px', color: 'black',textTransform: 'none' }} // Style for layout
+                  onMouseEnter={(e) => {
+                    e.currentTarget.querySelector('.close-button').style.visibility = 'visible'; 
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.querySelector('.close-button').style.visibility = 'hidden'; 
+                  }}
                 >
                   <div className="label-family-container">
+                  <CloseButton  className="close-button" styling={{right:'-400px', top:"-12px"}}onClick={() =>deleteLabelFamily(newLabelFamily.id)} />
+                      
                     <div className="label-family-name">
                       <p>
                         <strong className="nowrap">Label family name:</strong><br />
@@ -599,6 +626,7 @@ const ConfigureLabels = () => {
                     <div className="family-container">
                       {/* Toggle Button for Description */}
                       <div className="label-description-container" style={{ textAlign: 'left' }}>
+
                         <Button
                           variant="text"
                           onClick={(e) => toggleFamilyExpansion(newLabelFamily.id, e)} // Toggle description visibility
@@ -625,21 +653,34 @@ const ConfigureLabels = () => {
                 <div className="label-list">
                   {newLabelFamily.labels.length > 0 && (
                     newLabelFamily.labels.map((label) => (
+                      
                       <div key={label.index}>
+
                         <div
-                          className="label-button-container"
+                          className="label-container"
                           style={{ textAlign: 'left', marginBottom: '10px', color: 'black', textTransform: 'none' }} 
                           onClick={() => handleEditLabel(label, newLabelFamily)} 
+                          onMouseEnter={(e) => {
+                            e.currentTarget.querySelector('.close-button').style.visibility = 'visible'; 
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.querySelector('.close-button').style.visibility = 'hidden'; 
+                          }}
                         >
+                         <CloseButton styling={{right: "-380px", top:'-18px'}} onClick={() =>deleteLabel(label.id)} />
+
                           <div className="label-header">
+
                             <div className="label-name"> 
+
                               <p>
                                 <strong className="nowrap">Label name:</strong><br />
                                 <span className="custom-label-name-label-description">{label.labelName || 'Unnamed'}</span>
                               </p>
                             </div>
 
-                            <div className="label-description-container" style={{ textAlign: 'left' }}>
+                            <div className="label-description-container" style={{ textAlign: 'left', color: 'black' }}>
+
                               <Button
                                 variant="text"
                                 onClick={(e) => toggleLabelExpansion(label.id, e)} // Toggle description visibility by label's id

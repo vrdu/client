@@ -25,19 +25,20 @@ const Project = ({ onClose }) => {
         withCredentials: true
       });
 
-      if (response.data.exists) {
-        setErrorMessage('This name is already taken');
-      } else {
+      if (!response.data.exists) {
         // On success, navigate to the project page
         sessionStorage.setItem('projectName', projectName);
         navigate(`/projects/${projectName}/configureLabels`);
         onClose();
       }
     } catch (error) {
-      console.log(error);
-      setErrorMessage('An error occurred while checking the name');
+      if (error.response && error.response.data && error.response.data.detail) {
+        setErrorMessage(error.response.data.detail);
+      }
     }
   };
+
+  
 
   return (
     <div className='dialog-content'>

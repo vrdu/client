@@ -58,8 +58,7 @@ function RegisterForm() {
     console.log("error:")
     console.log(error);
     setAlertStatus(true);
-    setErrorMessage(error)
-    
+    setErrorMessage(error) 
   }
   const handleClose = () => {
     setAlertStatus(false);

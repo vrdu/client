@@ -6,7 +6,7 @@ import Project from '../views/project';
 import ConfigureLabels from '../views/configureLabels';
 import UploadInstructionDocuments from '../views/uploadInstructionDocuments';
 import ProtectedRoute from './ProtectedRoute';
-import DummyView from '../views/dummyView';
+
 
 
 const AppRouter = () => {
@@ -45,14 +45,6 @@ const AppRouter = () => {
                     element={
                         <ProtectedRoute>
                         <UploadInstructionDocuments/>
-                        </ProtectedRoute>
-                    }
-                    />
-                <Route
-                    path="/dummy"
-                    element={
-                        <ProtectedRoute>
-                        <DummyView/>
                         </ProtectedRoute>
                     }
                     />
