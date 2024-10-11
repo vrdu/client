@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect} from 'react';
 import '../styling/home.css'; 
 import '../styling/configureLabels.css'; 
+import '../styling/index.css';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { useDropzone } from 'react-dropzone';
@@ -22,10 +23,15 @@ const ConfigureLabels = () => {
   const [droppedFile, setDroppedFile] = useState(null);
   //const [zoomEnabled, setZoomEnabled] = useState(false);
 
+  //Adding stuff
   const [openAddFamily, setOpenAddFamily] = useState(false);
   const [openUpdateFamily, setopenUpdateFamily] = useState(false);
   const [openAddLabel, setOpenAddLabel] = useState(false);
   const [openUpdateLabel, setOpenUpdateLabel] = useState(false);
+  //deleting stuff
+  const [deleteLabelFamily, setDeleteLabelFamily] = useState(false);
+  const [deleteLabel, setDeleteLabel] = useState(false);
+
 
   const [expandedLabels, setExpandedLabels] = useState({});
   const [expandedFamilies, setExpandedFamilies] = useState({});
@@ -303,17 +309,103 @@ const ConfigureLabels = () => {
     setOpenAddLabel(false);
     setopenUpdateFamily(false);
     setOpenUpdateLabel(false);
+    setDeleteLabelFamily(false);
+    setDeleteLabel(false);
 
     setErrorMessage("");
   };
   
   //Deleting of label families/labels
-  const deleteLabelFamily = (id) => {
-  }
+  const handleDeleteLabelFamily = (id) => {
+    const familyToDelete = labelFamilies.find(labelFamily => labelFamily.id === id);
+    if (familyToDelete) {
+      setNewLabelFamily({oldLabelFamilyName: familyToDelete.labelFamilyName, 
+                          labelFamilyName: familyToDelete.labelFamilyName, 
+                          labelFamilyDescription: familyToDelete.labelFamilyDescription, 
+                          register: false, 
+                          labels: familyToDelete.labels,
+                          id: familyToDelete.id,
+                          index: familyToDelete.index,
+                          });
+      setDeleteLabelFamily(true); 
+                        }
+  };
 
-  const deleteLabel = (id) => {
-  }
+  const sendDeleteLabelFamilyToBackend = async (e) => {
+    e.preventDefault();
+
+    console.log("sendDeleteLabelFamilyToBackend");
+    
+    try {
+      const username = sessionStorage.getItem('username');
+      const projectName = sessionStorage.getItem('projectName');
+      const response = await api(false).delete(`/projects/${username}/${projectName}/label-families`,  {
+        data: newLabelFamily,
+        withCredentials: true,  
+      });
+      if (response.status === 200) {
+        setLabelFamilies((prevFamilies) => 
+          prevFamilies.filter(family => family.id !== newLabelFamily.id)  // Remove the deleted label family
+        );
+        handleClose();
+      }
+
+    } catch (error) {
+      raiseError(error.response.data.detail);
+      
+    }
+
+    
+  };
+
+
+  const handleDeleteLabel = (labelFamily, id) => {
+    // Find the matching labelFamily by its name
+    const foundFamily = labelFamilies.find(family => family.labelFamilyName === labelFamily.labelFamilyName);
+    
+    // If the labelFamily is found, look for the specific label by its id
+    if (foundFamily) {
+      const deleteLabel = foundFamily.labels.find(label => label.id === id);
+      setNewLabelFamily(labelFamily)
+      if (deleteLabel) {
+        setNewLabel(deleteLabel);  // Set the found label as the newLabel
+        setDeleteLabel(true);      // Trigger the delete action
+      }
+    }
+  };
   
+
+  const sendDeleteLabelToBackend = async (e) => {
+    e.preventDefault();
+    try {
+      const username = sessionStorage.getItem('username');
+      const projectName = sessionStorage.getItem('projectName');
+      const response = await api(false).delete(`/projects/${username}/${projectName}/labels`,  {
+        data: newLabel,
+        withCredentials: true,  
+      });
+      if (response.status === 200) {
+        setLabelFamilies((prevFamilies) =>
+          prevFamilies.map((family) => {
+            if (family.id === newLabelFamily.id) {
+              console.log("matched a familyId")
+              return {
+                ...family,
+                labels: family.labels.filter((label) => label.id !== newLabel.id),
+              };
+            }
+            return family;
+          })
+        );
+          handleClose();  
+      }
+
+    } catch (error) {
+      raiseError(error.response.data.detail);
+      
+    }
+
+  };
   // Functionalities for expanding and collapsing the description of label families and labels
   const toggleFamilyExpansion = (id, e) => {
     e.stopPropagation(); 
@@ -360,6 +452,74 @@ const ConfigureLabels = () => {
 
   return (
     <div>
+
+      {/* pop-up deleting label family */}
+      <Dialog open={deleteLabelFamily} onClose={handleClose}>
+        <DialogTitle>
+          {`Sure to Delete Label Family with Name:`} <br />
+          <strong style={{ display: 'block', textAlign: 'center' }}>
+            {`${newLabelFamily.labelFamilyName}`}
+          </strong>
+        </DialogTitle>
+       <form onSubmit={sendDeleteLabelFamilyToBackend}>
+          <DialogActions>
+            {/* Submit Button */}
+            <div className="button-container">
+              <Button 
+                variant="contained" 
+                className="half-width-button"
+                style={{ marginTop: '20px', background: 'var(--red)' }}
+                type="submit" 
+                 >
+                Delete
+              </Button>
+              <Button onClick={handleClose} 
+              variant="outlined" 
+              color="primary" 
+              className="half-width-button"
+              style={{ marginTop: '20px' }}
+              >
+                Cancel
+              </Button>
+            </div>
+          </DialogActions>
+        </form>
+      </Dialog>
+
+      {/* Pop-up Dialog For deleteing labels*/}
+      <Dialog open={deleteLabel} onClose={handleClose}>
+        <DialogTitle>
+          {`Sure to Delete Label  with Name:`} <br />
+          <strong style={{ display: 'block', textAlign: 'center' }}>
+            {`${newLabel.labelName}`}
+            {`${newLabelFamily.labelFamilyName}`}
+          </strong>
+        </DialogTitle>
+       <form onSubmit={sendDeleteLabelToBackend}>
+          <DialogActions>
+            {/* Submit Button */}
+            <div className="button-container">
+              <Button 
+                variant="contained" 
+                className="half-width-button"
+                style={{ marginTop: '20px', background: 'var(--red)' }}
+                type="submit" 
+                 >
+                Delete
+              </Button>
+              <Button onClick={handleClose} 
+              variant="outlined" 
+              color="primary" 
+              className="half-width-button"
+              style={{ marginTop: '20px' }}
+              >
+                Cancel
+              </Button>
+            </div>
+          </DialogActions>
+        </form>
+      </Dialog>
+
       {/* Pop-up Dialog For adding new LabelFamilies*/}
       <Dialog open={openAddFamily} onClose={errorMessage ? null : handleClose}>
         <DialogTitle>{ 'Add New Label Family'}</DialogTitle>
@@ -404,7 +564,11 @@ const ConfigureLabels = () => {
                  >
                 submit
               </Button>
-              <Button onClick={handleClose} variant="outlined" color="primary" className="half-width-button">
+              <Button onClick={handleClose} 
+              variant="outlined" 
+              color="primary" 
+              style={{ marginTop: '20px' }}className="half-width-button"
+              >
                 Cancel
               </Button>
             </div>
@@ -414,143 +578,155 @@ const ConfigureLabels = () => {
 
       {/* Pop-up Dialog For updating new LabelFamilies*/}
       <Dialog open={openUpdateFamily} onClose={errorMessage ? null : handleClose}>
-              <DialogTitle>{ 'Update Label Family'}</DialogTitle>
-              <form onSubmit={sendUpdateLabelFamilyToBackend}>
-                <DialogContent>
-                  {/* Content inside pop-up */}
-                  <div className="form-container">
+        <DialogTitle>{ 'Update Label Family'}</DialogTitle>
+        <form onSubmit={sendUpdateLabelFamilyToBackend}>
+          <DialogContent>
+            {/* Content inside pop-up */}
+            <div className="form-container">
 
-                    {/* TextField for Label Name */}
-                    <TextField
-                      label="Label Family Name"                  
-                      variant="outlined"
-                      className="label-name-field"
-                      value={newLabelFamily.labelFamilyName|| ''}
-                      onChange={(e) => {setNewLabelFamily({ ...newLabelFamily, labelFamilyName: e.target.value, register: false, inUse: true })}}
-                      fullWidth={false}
-                      helperText={errorMessage}
-                      error={!!errorMessage}
-                      size="small" 
-                    />
+              {/* TextField for Label Name */}
+              <TextField
+                label="Label Family Name"                  
+                variant="outlined"
+                className="label-name-field"
+                value={newLabelFamily.labelFamilyName|| ''}
+                onChange={(e) => {setNewLabelFamily({ ...newLabelFamily, labelFamilyName: e.target.value, register: false, inUse: true })}}
+                fullWidth={false}
+                helperText={errorMessage}
+                error={!!errorMessage}
+                size="small" 
+              />
 
-                    {/* TextField for Label Description */}               
-                    <TextField
-                      label="Label Family Description"
-                      variant="outlined"
-                      className="label-description-field"
-                      multiline
-                      value={newLabelFamily.labelFamilyDescription|| ''}
-                        
-                      onChange={(e) => {setNewLabelFamily({ ...newLabelFamily, labelFamilyDescription: e.target.value, register: false, inUse: true })}}
-                      rows = {4}
-                    />
-                  </div>
-                </DialogContent>
-                <DialogActions>
-                  {/* Submit Button */}
-                  <div className="button-container">
-                    <Button 
-                      variant="contained" 
-                      style={{ marginTop: '20px' }}
-                      type="submit" 
-                      >
-                      submit
-                    </Button>
-                    <Button onClick={handleClose} variant="outlined" color="primary" className="half-width-button">
-                      Cancel
-                    </Button>
-                  </div>
-                </DialogActions>
-              </form>
-            </Dialog>
-            {/*pop-up for adding new label */}
-            <Dialog open={openAddLabel} onClose={errorMessage ? null : handleClose}>
-              <DialogTitle>{'Add New Label'}</DialogTitle>
-              <form onSubmit={sendLabelToBackend}>
-                <DialogContent>
-                  <div className="form-container">
-                    <TextField
-                      label="Label Name"
-                      variant="outlined"
-                      className="label-name-field"
-                      value={newLabel.labelName|| ''}
-                      onChange={(e) => setNewLabel({ ...newLabel, labelName: e.target.value, register: true})}
-                      fullWidth={false}
-                      helperText={errorMessage}
-                      error={!!errorMessage}
-                      size="small" 
-                    />
-
-                    <TextField
-                      label="Label Description"
-                      variant="outlined"
-                      className="label-description-field"
-                      multiline
-                      value={newLabel.labelDescription|| ''}
-                      onChange={(e) => setNewLabel({ ...newLabel, labelDescription: e.target.value, register: true})}
-                      rows = {4}
-                    />
+              {/* TextField for Label Description */}               
+              <TextField
+                label="Label Family Description"
+                variant="outlined"
+                className="label-description-field"
+                multiline
+                value={newLabelFamily.labelFamilyDescription|| ''}
                   
-                    <div className="button-container">
-                      <Button 
-                        variant="contained" 
-                        style={{ marginTop: '20px' }}
-                        type="submit" 
-                        >
-                        submit
-                      </Button>
-                      <Button onClick={handleClose} variant="outlined" color="primary" className="half-width-button">
-                        Cancel
-                      </Button>
-                    </div>
-                  </div>
-                </DialogContent>
-              </form>
-            </Dialog>
+                onChange={(e) => {setNewLabelFamily({ ...newLabelFamily, labelFamilyDescription: e.target.value, register: false, inUse: true })}}
+                rows = {4}
+              />
+            </div>
+          </DialogContent>
+          <DialogActions>
+            {/* Submit Button */}
+            <div className="button-container">
+              <Button 
+                variant="contained" 
+                style={{ marginTop: '20px' }}
+                type="submit" 
+                >
+                submit
+              </Button>
+              <Button onClick={handleClose} 
+                variant="outlined" 
+                color="primary" 
+                style={{ marginTop: '20px' }}className="half-width-button"
+                >
+                Cancel
+              </Button>
+            </div>
+          </DialogActions>
+        </form>
+      </Dialog>
+      {/*pop-up for adding new label */}
+      <Dialog open={openAddLabel} onClose={errorMessage ? null : handleClose}>
+        <DialogTitle>{'Add New Label'}</DialogTitle>
+        <form onSubmit={sendLabelToBackend}>
+          <DialogContent>
+            <div className="form-container">
+              <TextField
+                label="Label Name"
+                variant="outlined"
+                className="label-name-field"
+                value={newLabel.labelName|| ''}
+                onChange={(e) => setNewLabel({ ...newLabel, labelName: e.target.value, register: true})}
+                fullWidth={false}
+                helperText={errorMessage}
+                error={!!errorMessage}
+                size="small" 
+              />
 
-            <Dialog open={openUpdateLabel} onClose={errorMessage ? null : handleClose}>
-              <DialogTitle>{'Update Label'}</DialogTitle>
-              <form onSubmit={sendUpdateLabelToBackend}>
-                <DialogContent>
-                  <div className="form-container">
-                    <TextField
-                      label="Label Name"
-                      variant="outlined"
-                      className="label-name-field"
-                      value={newLabel.labelName|| ''}
-                      onChange={(e) => setNewLabel({ ...newLabel, labelName: e.target.value, register: false})}
-                      fullWidth={false}
-                      helperText={errorMessage}
-                      error={!!errorMessage}
-                      size="small" 
-                    />
+              <TextField
+                label="Label Description"
+                variant="outlined"
+                className="label-description-field"
+                multiline
+                value={newLabel.labelDescription|| ''}
+                onChange={(e) => setNewLabel({ ...newLabel, labelDescription: e.target.value, register: true})}
+                rows = {4}
+              />
+            
+              <div className="button-container">
+                <Button 
+                  variant="contained" 
+                  style={{ marginTop: '20px' }}
+                  type="submit" 
+                  >
+                  submit
+                </Button>
+                <Button onClick={handleClose} 
+                variant="outlined" 
+                color="primary" 
+                style={{ marginTop: '20px' }}className="half-width-button"
+                >
+                Cancel
+              </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </form>
+      </Dialog>
 
-                    <TextField
-                      label="Label Description"
-                      variant="outlined"
-                      className="label-description-field"
-                      multiline
-                      value={newLabel.labelDescription|| ''}
-                      onChange={(e) => setNewLabel({ ...newLabel, labelDescription: e.target.value, register: false})}
-                      rows = {4}
-                    />
-                  
-                    <div className="button-container">
-                      <Button 
-                        variant="contained" 
-                        style={{ marginTop: '20px' }}
-                        type="submit" 
-                        >
-                        submit
-                      </Button>
-                      <Button onClick={handleClose} variant="outlined" color="primary" className="half-width-button">
-                        Cancel
-                      </Button>
-                    </div>
-                  </div>
-                </DialogContent>
-              </form>
-            </Dialog>
+      <Dialog open={openUpdateLabel} onClose={errorMessage ? null : handleClose}>
+        <DialogTitle>{'Update Label'}</DialogTitle>
+        <form onSubmit={sendUpdateLabelToBackend}>
+          <DialogContent>
+            <div className="form-container">
+              <TextField
+                label="Label Name"
+                variant="outlined"
+                className="label-name-field"
+                value={newLabel.labelName|| ''}
+                onChange={(e) => setNewLabel({ ...newLabel, labelName: e.target.value, register: false})}
+                fullWidth={false}
+                helperText={errorMessage}
+                error={!!errorMessage}
+                size="small" 
+              />
+
+              <TextField
+                label="Label Description"
+                variant="outlined"
+                className="label-description-field"
+                multiline
+                value={newLabel.labelDescription|| ''}
+                onChange={(e) => setNewLabel({ ...newLabel, labelDescription: e.target.value, register: false})}
+                rows = {4}
+              />
+            
+              <div className="button-container">
+                <Button 
+                  variant="contained" 
+                  style={{ marginTop: '20px' }}
+                  type="submit" 
+                  >
+                  submit
+                </Button>
+                <Button onClick={handleClose} 
+                  variant="outlined" 
+                  color="primary" 
+                  style={{ marginTop: '20px' }}className="half-width-button"
+                  >
+                  Cancel
+              </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </form>
+      </Dialog>
 
       <div className="blob">
         <h1 className="heading">Configure Labels</h1>
@@ -590,12 +766,7 @@ const ConfigureLabels = () => {
             >
               Import labels
             </Button>
-            <div>
-              
             
-            </div>
-            
-    
             {/* Display submitted label */}
             <div className="submitted-label-families">
               {labelFamilies.map((newLabelFamily) => (
@@ -615,7 +786,7 @@ const ConfigureLabels = () => {
                   }}
                 >
                   <div className="label-family-container">
-                  <CloseButton  className="close-button" styling={{right:'-400px', top:"-12px"}}onClick={() =>deleteLabelFamily(newLabelFamily.id)} />
+                  <CloseButton  className="close-button" styling={{right:'-400px', top:"-12px"}}onClick={(e) =>{handleDeleteLabelFamily(newLabelFamily.id); e.stopPropagation();}} />
                       
                     <div className="label-family-name">
                       <p>
@@ -667,7 +838,7 @@ const ConfigureLabels = () => {
                             e.currentTarget.querySelector('.close-button').style.visibility = 'hidden'; 
                           }}
                         >
-                         <CloseButton styling={{right: "-380px", top:'-18px'}} onClick={() =>deleteLabel(label.id)} />
+                         <CloseButton styling={{right: "-380px", top:'-18px'}} onClick={(e) =>{handleDeleteLabel(newLabelFamily, label.id); e.stopPropagation();}} />
 
                           <div className="label-header">
 
@@ -701,9 +872,7 @@ const ConfigureLabels = () => {
                       </div>
                     ))
                   )}
-              </div>
-
-
+                </div>
 
                   {/* Add label button */}
                   <Button 
