@@ -32,6 +32,8 @@ const ConfigureLabels = () => {
   const [deleteLabelFamily, setDeleteLabelFamily] = useState(false);
   const [deleteLabel, setDeleteLabel] = useState(false);
 
+  //pop-up for importing label (families)
+  const [importLabelFamily, setImportLabelFamily] = useState(false);
 
   const [expandedLabels, setExpandedLabels] = useState({});
   const [expandedFamilies, setExpandedFamilies] = useState({});
@@ -59,6 +61,7 @@ const ConfigureLabels = () => {
   // Error handling
   const [errorMessage, setErrorMessage] = useState("");
 
+  
   //console logs
   useEffect(() => {
     console.log("labelFamiles: ", labelFamilies);
@@ -69,7 +72,23 @@ const ConfigureLabels = () => {
 
 //make calls to backend
 
-//load all labels when loading the website
+//useEffect to load all label families when loading the website
+useEffect(() => {
+  const fetchProjects = async () => {
+    const username = sessionStorage.getItem('username');
+    try {
+      const projectName = sessionStorage.getItem('projectName');
+      const response = await api(false).get(`/projects/${username}/${projectName}/label-families`, {
+        withCredentials: true,  
+      });
+      setLabelFamilies(response.data);  
+    } catch (error) {
+      console.error('Error fetching projects:', error);
+    }
+  };
+
+  fetchProjects();
+}, []);
 
   const sendLabelFamilyToBackend = async (e) => {
     e.preventDefault();
@@ -223,10 +242,6 @@ const ConfigureLabels = () => {
     setErrorMessage(error)
     
   }
-//when deleting a label family, make a delete request to backend
-
-//when deleting a label, make a delete request to backend
-//hook to send the data to the backend at the right time:
 
 
   // Logic concerning the Label Families
@@ -311,6 +326,7 @@ const ConfigureLabels = () => {
     setOpenUpdateLabel(false);
     setDeleteLabelFamily(false);
     setDeleteLabel(false);
+    setImportLabelFamily(false);
 
     setErrorMessage("");
   };
@@ -406,6 +422,12 @@ const ConfigureLabels = () => {
     }
 
   };
+
+  //Importing label families
+  const sendGetLabelFamilyToBackend = async (e) => {
+    e.preventDefault();
+
+  }
   // Functionalities for expanding and collapsing the description of label families and labels
   const toggleFamilyExpansion = (id, e) => {
     e.stopPropagation(); 
@@ -452,6 +474,38 @@ const ConfigureLabels = () => {
 
   return (
     <div>
+    {/* pop-up deleting label family */}
+    <Dialog open={importLabelFamily} onClose={handleClose}>
+        <DialogTitle>
+          {`Select the label (families) you want to import`} <br />
+          <strong style={{ display: 'block', textAlign: 'center' }}>
+            {`${newLabelFamily.labelFamilyName}`}
+          </strong>
+        </DialogTitle>
+       <form onSubmit={sendGetLabelFamilyToBackend}>
+          <DialogActions>
+            {/* Submit Button */}
+            <div className="button-container">
+              <Button 
+                variant="contained" 
+                className="half-width-button"
+                style={{ marginTop: '20px', background: 'var(--red)' }}
+                type="submit" 
+                 >
+                IMPORT
+              </Button>
+              <Button onClick={handleClose} 
+              variant="outlined" 
+              color="primary" 
+              className="half-width-button"
+              style={{ marginTop: '20px' }}
+              >
+                Cancel
+              </Button>
+            </div>
+          </DialogActions>
+        </form>
+      </Dialog>
 
       {/* pop-up deleting label family */}
       <Dialog open={deleteLabelFamily} onClose={handleClose}>
@@ -761,7 +815,7 @@ const ConfigureLabels = () => {
           <div className="right-placeholder">
             <Button 
               variant="outlined" 
-              onClick={() => {}} 
+              onClick = {() => setImportLabelFamily(true)} 
               className="import-button"
             >
               Import labels

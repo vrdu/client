@@ -7,7 +7,6 @@ import '../styling/home.css';
 const Home = () => {
   const [projects, setProjects] = useState([]);
 
-  // Fetch projects on component mount
   useEffect(() => {
     const fetchProjects = async () => {
       const username = sessionStorage.getItem('username');
@@ -15,7 +14,7 @@ const Home = () => {
         const response = await api().get(`/projects/${username}`, {
           withCredentials: true
         });
-        setProjects(response.data);  // Assuming the API returns a list of projects
+        setProjects(response.data);  
       } catch (error) {
         console.error('Error fetching projects:', error);
       }
