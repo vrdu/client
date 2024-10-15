@@ -47,7 +47,8 @@ const ConfigureLabels = () => {
                                               familyName: '',
                                               oldLabelName: ''});
   //used to store the label families (and their labels) 
-  //const {labelFamilies, addLabelFamily, updateLabelFamily, addOrUpdateLabel } = useLabelFamiliesWithReducer();
+  const[projects, setProjects] = useState([]);
+  const[project, setProject] = useState({id: null, projectName: '', labelFamilies: []});
   const [labelFamilies, setLabelFamilies] = useState([]);
   const [newLabelFamily, setNewLabelFamily] = useState({id: null, 
                                                         index: null, 
@@ -428,6 +429,23 @@ useEffect(() => {
     e.preventDefault();
 
   }
+
+  const sendGetProjectsToBackend = async () => {
+    
+    const username = sessionStorage.getItem('username');
+    try {
+      const response = await api(false).get(`/projects/${username}`, {
+        withCredentials: true,  
+      });
+      console.log(response.data);
+      setProjects(response.data);  
+    } catch (error) {
+      console.error('Error fetching projects:', error);
+    }
+  };
+
+
+  
   // Functionalities for expanding and collapsing the description of label families and labels
   const toggleFamilyExpansion = (id, e) => {
     e.stopPropagation(); 
@@ -479,7 +497,7 @@ useEffect(() => {
         <DialogTitle>
           {`Select the label (families) you want to import`} <br />
           <strong style={{ display: 'block', textAlign: 'center' }}>
-            {`${newLabelFamily.labelFamilyName}`}
+            {`${projects.projectName}`}
           </strong>
         </DialogTitle>
        <form onSubmit={sendGetLabelFamilyToBackend}>
@@ -815,7 +833,7 @@ useEffect(() => {
           <div className="right-placeholder">
             <Button 
               variant="outlined" 
-              onClick = {() => setImportLabelFamily(true)} 
+              onClick = {() => {sendGetProjectsToBackend(); setImportLabelFamily(true)}} 
               className="import-button"
             >
               Import labels
