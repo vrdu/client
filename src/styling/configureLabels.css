@@ -265,7 +265,6 @@
       display: inline-block;
       margin-top: 0px;
       white-space: normal; /* Allow text to wrap */
-      
       max-width: 35%;
     }
 
@@ -341,5 +340,74 @@
     .label-family-container:hover .close-button {
       visibility: visible; /* Show the button when hovering over the container */
     }
+    
+    /* Styling for the împort of (label) families. */
+    .projects-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }  
+    .projects-list {
+      display: flex;
+      width: 100%; /* Expand to full width of the parent */
+      align-items: center;
+      flex-direction: column;
+      justify-content: space-between; /* Adjust spacing between items */
+    }
+    .project-item {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      width: 100%;
+      max-width: 600px;
+      padding: 5px;
+    }
+
+    .import-labels-button {
+      width: 15px;  /* Small quadratic size */
+      height: 15px;
+      background-color: white;  /* Initial background */
+      border: 2px solid var(--blue);  /* Outlined border with var(--blue) */
+      border-radius: 2px;  /* Optional, for slight rounding of corners */
+      transition: background-color 0.2s ease;  /* Smooth transition for hover and press */
+      margin-left: 40px;
+    }
+    
+    .import-labels-button:hover {
+      background-color: rgba(var(--blue-rgb), 0.5) !important; /* Semi-transparent shade of blue on hover */
+    }
+    
+    .import-labels-button:active {
+      background-color: var(--blue);  /* Solid blue when pressed */
+    }
+    .project-name {
+      flex-grow: 1;
+      text-align: left;
+      font-size: 16px;
+      margin-left: 10px;
+      white-space: nowrap;      /* Prevent text from wrapping */
+      overflow-x: auto;         /* Enable horizontal scrolling */
+      overflow-y: hidden;       /* Hide vertical overflow */
+      text-overflow: ellipsis;  /* Optional: Adds "..." at the end */
+      max-width: 400px;          /* Ensure it doesn't exceed container width */
+    }
+    .expand-button{
+      margin-right: 40px;
+      border:#e0e0e0;
+      background-color: white;
+      border: 'none';
+      padding: none;
+    }
+
+    .expand-button:hover {
+      background-color: var(--shadeDarker);
+    }
+
+    .expand-button:hover .expand-icon {
+      background-color: var(--shadeDarker); /* Change icon color on hover */
+      color: var(--blue);
+    }
+
     
     

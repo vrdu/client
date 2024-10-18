@@ -7,6 +7,7 @@ class label {
       this.register = null;
       this.familyName = null;
       this.oldLabelName = null;
+      this.toImport = null;
       Object.assign(this, data);
     }
   }

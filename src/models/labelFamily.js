@@ -8,6 +8,8 @@ class labelFamily {
       this.inUse = null;
       this.register = null;
       this.labels = [];
+      this.toImport = null;
+
 
     this.id = data.id || this.id;
     this.index = String(data.index || '');
@@ -17,6 +19,7 @@ class labelFamily {
     this.labelFamilyDescription = data.labelFamilyDescription || this.labelFamilyDescription;
     this.register = data.register || this.register;
     this.labels = data.labels || []; 
+    this.toImport = data.toImport || this.toImport;
 
     }
   }
