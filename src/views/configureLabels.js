@@ -62,7 +62,7 @@ const ConfigureLabels = () => {
                                                         register: true, 
                                                         labelFamilyDescription: '',
                                                         inUse: true, 
-                                                        toImport: false,
+                                                        toImport: true,
                                                         labels: []});
 
   // Error handling
@@ -433,6 +433,7 @@ useEffect(() => {
   //Importing label families
   const sendGetLabelFamilyToBackend = async (e) => {
     e.preventDefault();
+    
   };
 
   const sendGetProjectsToBackend = async (e) => {
@@ -474,11 +475,9 @@ useEffect(() => {
 
 
   useEffect(() => {
-    console.log("projects: ", projects);
-    console.log("projects.length: ", projects.length);
     if (projects && projects.length > 0 && projects[0].projectName) {
       setImportLabelFamily(true);
-      console.log("projects: ", projects);
+      
     }
 }, [projects]);
   // Functionalities for expanding and collapsing the description of label families and labels
@@ -498,54 +497,108 @@ useEffect(() => {
       }));
   };
   //Toggling of the import label family pop-up
-    // Functionalities for expanding and collapsing the description of label families and labels
-  const toggleImportLabelFamilyExpansion = async (id, e)  => {
-    e.stopPropagation(); 
 
-    try {
-      const username = sessionStorage.getItem('username');
-      const projectName = projects.find(project => project.id === id).projectName;
-      const response = await api(false).get(`/projects/${username}/${projectName}/label-families`, {
-        withCredentials: true,  
-      });
-      if (response.data && response.data.exists){
-        let Id = 0;
-        const parsedLabelFamilies = response.data.labelFamilies.map(family => {
-          Id += 1
-          return {
-            id: Id,
-            labelFamilyName: family.labelFamilyName,
-            labelFamilyDescription: family.labelFamilyDescription,
-            labels: family.labels.map(label => ({
-              id: label.id,
-              labelName: label.labelName,
-              labelDescription: label.labelDescription,
-            })),
-          };
-        });
-        const updatedProjects = projects.map(project => {
-          if (project.id === id) {
-            return {
-              ...project,
-              labelFamilies: parsedLabelFamilies, // Add the parsed labelFamilies to the project
-            };
-          }
-          return project;
-        });
-        console.log("updatedProjects: ", updatedProjects);
+// Function to toggle project expansion
+const toggleImportLabelFamilyExpansion = async (id, e) => {
+  e.stopPropagation();
 
-        setProjects(updatedProjects);
+  try {
+    const username = sessionStorage.getItem('username');
+    const projectName = projects.find(project => project.id === id).projectName;
 
-      } else {
-        console.log("The projects Families do not exist."+response.data.detail);
-      }
-          
-      } catch (error) {
-      raiseError(error.response.data.detail);
-      
-    }
+    const response = await api(false).get(`/projects/${username}/${projectName}/label-families`, {
+      withCredentials: true,
+    });
+    console.log("response: ", response.data);
     
-  };
+    if (response.data) {
+      let Id = -1;
+      const parsedLabelFamilies = response.data.map(family => {
+        Id += 1;
+        const StrId = Id.toString();
+        return {
+          index: StrId,
+          id: Id,
+          labelFamilyName: family.labelFamilyName,
+          labelFamilyDescription: family.labelFamilyDescription,
+          toImport: true,
+          labels: family.labels.map(label => ({
+            index: label.index,
+            labelName: label.labelName,
+            labelDescription: label.labelDescription,
+            toImport: false,
+          })),
+        };
+      });
+
+      // Update the labelFamilies in the correct project
+      const updatedProjects = projects.map(project => {
+        if (project.id === id) {
+          return {
+            ...project,
+            labelFamilies: parsedLabelFamilies, // Set labelFamilies for this project
+          };
+        }
+        return project;
+      });
+      setProjects(updatedProjects);
+      console.log("projectsInFetching: ", projects);
+      // Toggle expansion state for this project
+      setExpandedImportProjects(prevState => ({
+        ...prevState,
+        [id]: !prevState[id], // Toggle the boolean for this project ID
+      }));
+      console.log("before")
+      console.log("expandedImportProjects: ", expandedImportProjects);
+    } else {
+      console.log("No label families found for the project.");
+    }
+
+  } catch (error) {
+    raiseError(error.response?.data?.detail || 'Error fetching label families');
+  }
+};
+
+const toggleToImportProject = (id) => {
+  setProjects(prevProjects => 
+    prevProjects.map(project => 
+      project.id === id 
+        ? { ...project, toImport: !project.toImport }  // Toggle toImport
+        : project
+    )
+  );
+};
+
+const toggleToImportLabelFamily = (projectId, labelFamilyIndex) => {
+  console.log("Before update - projects: ", typeof(labelFamilyIndex));
+  const strFamilyIndex = toString(labelFamilyIndex);
+  setProjects(prevProjects => {
+    const updatedProjects = prevProjects.map(project => 
+      project.id === projectId
+        ? {
+            ...project,
+            labelFamilies: project.labelFamilies.map(labelFamily =>
+              labelFamily.id === labelFamilyIndex
+                ? { ...labelFamily, toImport: !labelFamily.toImport }  
+                : labelFamily
+            )
+          }
+        : project
+    );
+
+    console.log("Updated projects: ", updatedProjects);
+    return updatedProjects;
+  });
+};
+
+
+useEffect(() => {
+  console.log("Updated projects: ", projects);
+}, [projects]);  // Runs every time `projects` is updated
+
+
+
+
 
   // Drop PDF Functionality
   const onDrop = useCallback((acceptedFiles) => {
@@ -575,41 +628,75 @@ useEffect(() => {
 
   return (
     <div>
-{/* pop-up for importing (label) families */}
 <Dialog open={importLabelFamily} onClose={handleClose}>
   <DialogTitle>
     {`Select the label (families) you want to import`} <br />
-    {/* Display the first project's name or map over all project names */}
   </DialogTitle>
   <div className="projects-container">
-      {projects && projects.length > 0 ? (
-        <div className="projects-list">
-          {projects.map((project, index) => (
-            <div className="project-item" key={index}>
+    {projects && projects.length > 0 ? (
+      <div className="projects-list">
+        {projects.map((project, index) => (
+          <div className="project-item" key={index}>
+            <div className="project-container">
               {/* Left blue button */}
-              <button className="import-labels-button"></button>
-              
+              <button className="import-labels-button"
+              onClick={() => toggleToImportProject(project.id)}
+              style={{
+                backgroundColor: project.toImport ? 'var(--blue)' : 'white'
+              }}
+              ></button>
+
               {/* Project name in the middle */}
-              <strong className="project-name">project Name: {project.projectName}</strong>
-              
+              <strong className="project-name">
+                Project Name: {project.projectName}
+              </strong>
+
               {/* Expand button for labelFamilies */}
-              <button className="expand-button"
-                onClick={(e) => toggleImportLabelFamilyExpansion(project.id, e)}  
-                >
+              <button
+                className="expand-button"
+                onClick={(e) =>
+                  toggleImportLabelFamilyExpansion(project.id, e)
+                }
+              >
                 {expandedImportProjects[project.id] ? (
-                <ExpandLessIcon className="expand-icon"  /> 
-                 ) : (
-                <ExpandMoreIcon className="expand-icon" />
-                 )}
-                </button>
+                  <ExpandLessIcon className="expand-icon" />
+                ) : (
+                  <ExpandMoreIcon className="expand-icon" />
+                )}
+              </button>
             </div>
-          ))}
-        </div>
-      ) : (
-        <p>No projects available</p>
-      )}
+
+            {/* LabelFamilies list, shown when expanded */}
+            {expandedImportProjects[project.id] && (
+              <div className="family-list">
+                {project.labelFamilies && project.labelFamilies.length > 0 ? (
+                  project.labelFamilies.map((labelFamily, labelIndex) => (
+                    <div className="label-family-item" key={labelIndex}>
+                      <button className="import-labelFamily-button"
+                      onClick={() => toggleToImportLabelFamily(project.id, labelIndex)}
+                      style={{
+                        backgroundColor:  labelFamily.toImport ? 'var(--blue)' : 'white'
+                      }}
+                      ></button>
+                      <strong className="label-family-name">
+                        Label Family: {labelFamily.labelFamilyName}
+                      </strong>
+                      
+                      {/* You can expand further here for label details if needed */}
+                    </div>
+                  ))
+                ) : (
+                  <p>No label families available</p>
+                )}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    ) : (
+      <p>No projects available</p>
+    )}
   </div>
-  
   <form onSubmit={sendGetLabelFamilyToBackend}>
     <DialogActions>
       {/* Submit Button */}
@@ -635,6 +722,7 @@ useEffect(() => {
     </DialogActions>
   </form>
 </Dialog>
+
 
 
       {/* pop-up deleting label family */}

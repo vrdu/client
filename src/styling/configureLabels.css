@@ -357,6 +357,7 @@
     }
     .project-item {
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: flex-start;
       width: 100%;
@@ -409,5 +410,22 @@
       color: var(--blue);
     }
 
+    .import-labelFamily-button {
+      width: 15px;  /* Small quadratic size */
+      height: 15px;
+      background-color: white;  /* Initial background */
+      border: 2px solid var(--blue);  /* Outlined border with var(--blue) */
+      border-radius: 2px;  /* Optional, for slight rounding of corners */
+      transition: background-color 0.2s ease;  /* Smooth transition for hover and press */
+      margin-left: 40px;
+    }
+    
+    .import-labelFamily-button:hover {
+      background-color: rgba(var(--blue-rgb), 0.5) !important; /* Semi-transparent shade of blue on hover */
+    }
+    
+    .import-labelFamily-button:active {
+      background-color: var(--blue);  /* Solid blue when pressed */
+    }
     
     
