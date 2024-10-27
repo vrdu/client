@@ -435,9 +435,10 @@ useEffect(() => {
     e.preventDefault();
   
       const username = sessionStorage.getItem('username');
+      const projectName = sessionStorage.getItem('projectName');
       try {
       
-        const response = await api(false).post(`/projects/${username}`, projects, {
+        const response = await api(false).post(`/projects/${username}/${projectName}`, projects, {
           withCredentials: true,  
         });
         setLabelFamilies(response.data);  
