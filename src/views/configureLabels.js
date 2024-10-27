@@ -433,7 +433,17 @@ useEffect(() => {
   //Importing label families
   const sendGetLabelFamilyToBackend = async (e) => {
     e.preventDefault();
-    
+  
+      const username = sessionStorage.getItem('username');
+      try {
+      
+        const response = await api(false).post(`/projects/${username}`, projects, {
+          withCredentials: true,  
+        });
+        setLabelFamilies(response.data);  
+      } catch (error) {
+        console.error('Error fetching projects:', error);
+      }
   };
 
   const sendGetProjectsToBackend = async (e) => {
