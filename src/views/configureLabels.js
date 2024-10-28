@@ -88,8 +88,7 @@ useEffect(() => {
       const response = await api(false).get(`/projects/${username}/${projectName}/label-families`, {
         withCredentials: true,  
       });
-      setLabelFamilies(response.data);  
-    } catch (error) {
+      setLabelFamilies(Array.isArray(response.data) ? response.data : []);    } catch (error) {
       console.error('Error fetching projects:', error);
     }
   };
@@ -432,8 +431,8 @@ useEffect(() => {
 
   //Importing label families
   const sendGetLabelFamilyToBackend = async (e) => {
-    e.preventDefault();
-  
+    
+      e.preventDefault();
       const username = sessionStorage.getItem('username');
       const projectName = sessionStorage.getItem('projectName');
       try {
@@ -442,6 +441,7 @@ useEffect(() => {
           withCredentials: true,  
         });
         setLabelFamilies(response.data);  
+        handleClose();
       } catch (error) {
         console.error('Error fetching projects:', error);
       }
