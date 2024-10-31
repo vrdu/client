@@ -9,6 +9,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';  // Icon for the 
 import { api } from '../helpers/api';
 
 const UploadInstructionDocuments = () => {
+  const projectName = sessionStorage.getItem('projectName');
   const [files, setFiles] = useState([]);
   const [fileStatuses, setFileStatuses] = useState({});  // Track upload status for each file
   const [clickedFile, setClickedFile] = useState(null);  // Track which file name was clicked
@@ -226,7 +227,7 @@ useEffect(() => {
         </aside>
       </div>
       <div className="buttonContainer">
-        <Link to="/uploadInstructionDocuments">
+        <Link to={`/projects/${projectName}/annotate`}>
           <Button variant="contained" color="primary">
             Annotate example documents
           </Button>

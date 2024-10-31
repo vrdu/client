@@ -5,6 +5,7 @@ import Home from '../views/home';
 import Project from '../views/project';
 import ConfigureLabels from '../views/configureLabels';
 import UploadInstructionDocuments from '../views/uploadInstructionDocuments';
+import Annotate from '../views/annotate';
 import ProtectedRoute from './ProtectedRoute';
 
 
@@ -45,6 +46,14 @@ const AppRouter = () => {
                     element={
                         <ProtectedRoute>
                         <UploadInstructionDocuments/>
+                        </ProtectedRoute>
+                    }
+                    />
+                     <Route
+                    path="/projects/:projectName/annotate"
+                    element={
+                        <ProtectedRoute>
+                        <Annotate/>
                         </ProtectedRoute>
                     }
                     />
