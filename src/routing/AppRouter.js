@@ -41,7 +41,7 @@ const AppRouter = () => {
                     }
                     />
                 <Route
-                    path="/uploadInstructionDocuments"
+                    path="/projects/:projectName/uploadInstructionDocuments"
                     element={
                         <ProtectedRoute>
                         <UploadInstructionDocuments/>

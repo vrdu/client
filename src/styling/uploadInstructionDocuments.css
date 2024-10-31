@@ -52,6 +52,19 @@
     border-radius: 50%;
     padding: 5px;
   }
+  .close-button:hover {
+    width: '16px'; 
+    height: '16px'; 
+    Color: 'red'; 
+    color: 'white'; 
+    Radius: '50%'; 
+    padding: '3px'; 
+    position: 'absolute'; 
+    top: '-10px';
+    right: '-10px';
+    visibility: 'visible';
+  }
+ 
   .li {
     display: flex;
     justify-content: space-between;
@@ -85,6 +98,28 @@
 .upload-status:hover .upload-text {
   visibility: visible; /* Show the text when hovering */
 }
+
+.file-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  text-align: left;
+}
+.file {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  padding: 2px;
+  margin: 1px;
+  border: 1px solid var(--blue); 
+  border-radius: 5px;
+  background-color: white;
+  width: 600px;
+  box-sizing: border-box;
+}
+
 
   
   

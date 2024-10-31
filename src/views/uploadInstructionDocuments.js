@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState,useEffect } from 'react';
 import '../styling/home.css'; 
 import '../styling/uploadInstructionDocuments.css'; 
 import { Button, IconButton, CircularProgress, LinearProgress } from '@mui/material';
@@ -13,6 +13,53 @@ const UploadInstructionDocuments = () => {
   const [fileStatuses, setFileStatuses] = useState({});  // Track upload status for each file
   const [clickedFile, setClickedFile] = useState(null);  // Track which file name was clicked
 
+
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const raiseError = (error) => {
+    console.log("error:")
+    console.log(error);
+    setErrorMessage(error)
+    
+    setTimeout(() => {
+      setErrorMessage("");
+    }, 3000);
+    
+  }
+
+  //useEffect to load all label families when loading the website
+useEffect(() => {
+  const fetchDocuments = async () => {
+    const username = sessionStorage.getItem('username');
+    try {
+      const projectName = sessionStorage.getItem('projectName');
+      const response = await api(false).get(`/projects/${username}/${projectName}/documents`, {
+        withCredentials: true,  
+      });
+       // Set the files
+       const files = Array.isArray(response.data) ? response.data : [];
+       console.log("files: " + files);
+       setFiles(files);
+       
+       console.log(response.data)
+       files.forEach(file => {
+        console.log("File name:", file.name);
+      });
+       // Update fileStatuses for each file to indicate they are completed
+       const updatedStatuses = {};
+       files.forEach(file => {
+         updatedStatuses[file.name] = { loading: false, completed: true };
+       });
+       setFileStatuses(updatedStatuses);
+ 
+     } catch (error) {
+       console.error('Error fetching documents:', error);
+     }
+  };
+
+  fetchDocuments();
+}, []);
+
   const handleNameClick = (fileName) => {
     if (clickedFile === fileName) {
       setClickedFile(null); // Reset if clicked again
@@ -23,7 +70,7 @@ const UploadInstructionDocuments = () => {
 
   const onDrop = useCallback((acceptedFiles) => {
     const newFiles = acceptedFiles.filter(file => !files.some(f => f.name === file.name));
-
+    
     setFiles((prevFiles) => [...prevFiles, ...newFiles]);
 
     // Upload each new file as soon as it is dropped
@@ -73,7 +120,27 @@ const UploadInstructionDocuments = () => {
     }
   };
 
+  const deleteFile = async (fileName) => {
+    console.log("fileName: " + fileName);
+    
+    try {
+      const username = sessionStorage.getItem('username');
+      const projectName = sessionStorage.getItem('projectName');
+      await api(false).delete(`/projects/${username}/${projectName}/delete`, {
+        data: fileName,
+        withCredentials: true,  
+      });
+
+    } catch (error) {
+      raiseError(error.response.data.detail);
+      
+    }
+
+  };
+
   const removeFile = (fileName) => {
+    console.log("deleting file");
+    deleteFile(fileName);
     setFiles(files.filter(file => file.name !== fileName));
     setFileStatuses((prevStatuses) => {
       const newStatuses = { ...prevStatuses };
@@ -93,20 +160,8 @@ const UploadInstructionDocuments = () => {
 
       return (
         <li 
+          className='file'
           key={index} 
-          style={{ 
-            display: 'flex', 
-            justifyContent: 'space-between', 
-            alignItems: 'center', 
-            position: 'relative', 
-            padding: '2px',
-            margin: '1px',  
-            border: '1px solid var(--blue)', 
-            borderRadius: '5px',
-            backgroundColor: 'white',
-            width: '600px',
-            boxSizing: 'border-box',
-          }}
           onMouseEnter={(e) => {
             e.currentTarget.querySelector('.close-button').style.visibility = 'visible'; 
           }}
@@ -115,14 +170,10 @@ const UploadInstructionDocuments = () => {
           }}
           >
           <span 
+            className="file-name"
             onClick={() => handleNameClick(file.name)} 
             style={{
-            width: clickedFile === file.name ? '100%' : '75%', 
-            whiteSpace: 'nowrap', 
-            overflow: 'hidden', 
-            textOverflow: 'ellipsis', 
-            cursor: 'pointer',
-            textAlign: 'left',
+              width: clickedFile === file.name ? '100%' : '75%'
             }}
             >
             {file.name}
@@ -146,18 +197,6 @@ const UploadInstructionDocuments = () => {
             aria-label="delete"
             size="small"
             className="close-button"  
-            style={{ 
-              width: '16px', 
-              height: '16px', 
-              backgroundColor: 'red', 
-              color: 'white', 
-              borderRadius: '50%', 
-              padding: '3px', 
-              position: 'absolute', 
-              top: '-10px',
-              right: '-10px',
-              visibility: 'visible',  
-            }}
             onClick={() => removeFile(file.name)}
           >
             <CloseIcon style={{ color: 'white', fontSize: '12px' }} />

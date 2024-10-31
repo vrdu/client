@@ -86,10 +86,7 @@
       justify-content: center;
     }
     
-    .import-button {
-      position: relative;
-      margin: 10px;
-    }
+    
     
 .left-container {
   flex: 1;
@@ -427,5 +424,27 @@
     .import-labelFamily-button:active {
       background-color: var(--blue);  /* Solid blue when pressed */
     }
+
+    /*error styling*/
+    .error-message {
+      color: red;
+      margin-top: 8px; /* Adjust space between button and error message */
+      width: 100%;
+    }
+
+    .import-labels-box{
+      flex-grow: 1;
+      flex-direction: column;
+      display: flex;
+      width: 100%;
+      align-items: center;
+    }
+
+    .import-button {
+      position: relative;
+      margin: 10px;
+      width: 100%;
+    }
+    
     
     

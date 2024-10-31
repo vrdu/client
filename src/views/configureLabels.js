@@ -20,6 +20,7 @@ console.log("useLabelFamiliesWithReducer:", useLabelFamiliesWithReducer);
 // import { Document, Page } from 'react-pdf';
 
 const ConfigureLabels = () => {
+  const projectName = sessionStorage.getItem('projectName');
   const [droppedFile, setDroppedFile] = useState(null);
   //const [zoomEnabled, setZoomEnabled] = useState(false);
 
@@ -246,6 +247,10 @@ useEffect(() => {
     console.log("error:")
     console.log(error);
     setErrorMessage(error)
+
+    setTimeout(() => {
+      setErrorMessage("");
+    }, 3000);
     
   }
 
@@ -469,7 +474,9 @@ useEffect(() => {
               labelFamilies: project.labelFamilies || [] 
             };
           });
-        
+        if (parsedProjects.length === 0) {
+          raiseError("No projects found");
+        }
         setProjects(parsedProjects);
       } else {
         console.log("No matching project found with projectName: ", projectNameFromStorage);
@@ -1042,13 +1049,16 @@ useEffect(() => {
 
           {/* Right Placeholder */}
           <div className="right-placeholder">
-            <Button 
-              variant="outlined" 
-              onClick = {() => sendGetProjectsToBackend() } 
-              className="import-button"
-            >
-              Import labels
-            </Button>
+            <div className="import-labels-box">
+              <Button 
+                variant="outlined" 
+                onClick = {() => sendGetProjectsToBackend() } 
+                className="import-button"
+              >
+                Import labels
+              </Button>
+              {errorMessage && <div className="error-message">{errorMessage}</div>}
+            </div>
             
             {/* Display submitted label */}
             <div className="submitted-label-families">
@@ -1182,7 +1192,7 @@ useEffect(() => {
           </div>                         
         </div>                       
           <div className="button-container">
-            <Link to="/uploadInstructionDocuments">
+            <Link to={`/projects/${projectName}/uploadInstructionDocuments`}>            
             <Button variant="contained" color="primary">
               Upload Instruction Documents 
             </Button>
