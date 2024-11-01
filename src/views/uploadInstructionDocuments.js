@@ -1,4 +1,5 @@
 import React, { useCallback, useState,useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../styling/home.css'; 
 import '../styling/uploadInstructionDocuments.css'; 
 import { Button, IconButton, CircularProgress, LinearProgress } from '@mui/material';
@@ -10,9 +11,10 @@ import { api } from '../helpers/api';
 
 const UploadInstructionDocuments = () => {
   const projectName = sessionStorage.getItem('projectName');
+  const documentName = sessionStorage.getItem('documentName');
+  const navigate = useNavigate();
   const [files, setFiles] = useState([]);
   const [fileStatuses, setFileStatuses] = useState({});  // Track upload status for each file
-  const [clickedFile, setClickedFile] = useState(null);  // Track which file name was clicked
 
 
   const [errorMessage, setErrorMessage] = useState("");
@@ -28,11 +30,12 @@ const UploadInstructionDocuments = () => {
     
   }
 
-  //useEffect to load all label families when loading the website
+  //useEffect to load all documents when loading the website
 useEffect(() => {
   const fetchDocuments = async () => {
-    const username = sessionStorage.getItem('username');
+    
     try {
+      const username = sessionStorage.getItem('username');
       const projectName = sessionStorage.getItem('projectName');
       const response = await api(false).get(`/projects/${username}/${projectName}/documents`, {
         withCredentials: true,  
@@ -62,11 +65,8 @@ useEffect(() => {
 }, []);
 
   const handleNameClick = (fileName) => {
-    if (clickedFile === fileName) {
-      setClickedFile(null); // Reset if clicked again
-    } else {
-      setClickedFile(fileName); // Set clicked file
-    }
+    sessionStorage.setItem('documentName', fileName);
+    navigate(`/projects/${projectName}/annotate`);
   };
 
   const onDrop = useCallback((acceptedFiles) => {
@@ -161,26 +161,33 @@ useEffect(() => {
 
       return (
         <li 
-          className='file'
-          key={index} 
-          onMouseEnter={(e) => {
-            e.currentTarget.querySelector('.close-button').style.visibility = 'visible'; 
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.querySelector('.close-button').style.visibility = 'hidden'; 
-          }}
-          >
+        className='file'
+        key={index}
+        onMouseEnter={(e) => {
+          const closeButton = e.currentTarget.querySelector('.close-button');
+          if (closeButton) {
+            closeButton.style.visibility = 'visible';
+          }
+        }}
+        onMouseLeave={(e) => {
+          const closeButton = e.currentTarget.querySelector('.close-button');
+          if (closeButton) {
+            closeButton.style.visibility = 'hidden';
+          }
+        }}
+        >
+        
           <span 
             className="file-name"
             onClick={() => handleNameClick(file.name)} 
             style={{
-              width: clickedFile === file.name ? '100%' : '75%'
+              width: documentName === file.name ? '100%' : '75%'
             }}
             >
             {file.name}
           </span>
           {/* Display progress or checkmark */}
-          <div style={{ width: '30%', textAlign: 'center', visibility: clickedFile === file.name ? 'hidden' : 'visible' }}>
+          <div style={{ width: '30%', textAlign: 'center', visibility: documentName === file.name ? 'hidden' : 'visible' }}>
           {loading ? (
           <CircularProgress size={16} value={progress} />
             ) : completed ? (
@@ -191,7 +198,7 @@ useEffect(() => {
             ) : null}
           </div>
 
-          {clickedFile !== file.name && (
+          {documentName !== file.name && (
           <>
           <span> {/* Add loading animation or checkmark here */} </span>
           <IconButton

@@ -5,12 +5,36 @@ import { Button, IconButton, CircularProgress, LinearProgress } from '@mui/mater
 
 import { api } from '../helpers/api';
 
-const Annotate = () => {
 
+const Annotate = () => {
+      const [document, setDocument] = useState([]);
+
+        //useEffect to load all label families when loading the website
+useEffect(() => {
+      const fetchDocuments = async () => {
+        
+        try {
+            const username = sessionStorage.getItem('username');
+            const projectName = sessionStorage.getItem('projectName');
+            const documentName = sessionStorage.getItem('documentName');
+            const response = await api(false).get(`/projects/${username}/${projectName}/${documentName}/annotate`, {
+                  withCredentials: true,  
+            });
+                        
+            setDocument(response.data);
+            console.log(response.data)
+      
+            } catch (error) {
+                  console.error('Error fetching documents:', error);
+            }
+      };
+    
+      fetchDocuments();
+    }, []);
 
       return (
             <div>
-                  hello!
+                  document:{document.ocrData}
             </div>
       );
 };
