@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import '../styling/home.css'; 
 import '../styling/annotate.css'; 
-import * as pdfjsLib from 'pdfjs-dist';
-import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
+import { pdfjs } from 'react-pdf';
+import 'pdfjs-dist/build/pdf.worker.mjs'; 
 import { api } from '../helpers/api';
 
 const Annotate = () => {
@@ -20,7 +20,7 @@ const Annotate = () => {
                     `/projects/${username}/${projectName}/${documentName}/annotate`,
                     { withCredentials: true }
                 );
-
+                
                 setDocument(response.data);
                 console.log(response.data);
 
@@ -33,16 +33,17 @@ const Annotate = () => {
                 console.error('Error fetching documents:', error);
             }
         };
-
+        
         fetchDocuments();
     }, []);
 
     // Configure pdf.js
-    pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
+    pdfjs.GlobalWorkerOptions.workerSrc = `pdfjs-dist/build/pdf.worker.mjs`;
     // Function to render the PDF
     async function renderPDF(base64PdfData) {
         try {
-            const loadingTask = pdfjsLib.getDocument({ data: atob(base64PdfData) });
+            console.log('pdfData: ', document)
+            const loadingTask = pdfjs.getDocument({ data: atob(base64PdfData) });
             const pdf = await loadingTask.promise;
 
             // Get the first page
