@@ -1,0 +1,7 @@
+.sidebar__highlights {
+      height: 80vh;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 0;
+    }
+    

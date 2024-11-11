@@ -12,11 +12,10 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import { api } from '../helpers/api';
 
 import { CloseButton } from '../components/closeButton';
-import labelFamily from '../models/labelFamily';
+import LabelFamily from '../models/labelFamily';
 import label from '../models/label';
 
-import  { useLabelFamiliesWithReducer } from '../helpers/useLabelFamiliesWithReducer';
-console.log("useLabelFamiliesWithReducer:", useLabelFamiliesWithReducer);
+
 // import { Document, Page } from 'react-pdf';
 
 const ConfigureLabels = () => {
@@ -54,7 +53,7 @@ const ConfigureLabels = () => {
                                               familyName: '',
                                               oldLabelName: ''});
   //used to store the label families (and their labels) 
-  //const {labelFamilies, addLabelFamily, updateLabelFamily, addOrUpdateLabel } = useLabelFamiliesWithReducer();
+ 
   const [labelFamilies, setLabelFamilies] = useState([]);
   const [newLabelFamily, setNewLabelFamily] = useState({id: null, 
                                                         index: null, 
@@ -82,7 +81,7 @@ const ConfigureLabels = () => {
 
 //useEffect to load all label families when loading the website
 useEffect(() => {
-  const fetchProjects = async () => {
+  const fetchFamilies = async () => {
     const username = sessionStorage.getItem('username');
     try {
       const projectName = sessionStorage.getItem('projectName');
@@ -94,7 +93,7 @@ useEffect(() => {
     }
   };
 
-  fetchProjects();
+  fetchFamilies();
 }, []);
 
   const sendLabelFamilyToBackend = async (e) => {
@@ -259,7 +258,7 @@ useEffect(() => {
   const handleAddLabelFamily = () => {
     const newId = generateUniqueIdLabelFamily(); 
     const newIndex = labelFamilies.length;
-    const newLabelFamily = new labelFamily({id: newId, 
+    const newLabelFamily = new LabelFamily({id: newId, 
                                             index: newIndex, 
                                             labelFamilyName: '', 
                                             oldLabelFamilyName: '', 

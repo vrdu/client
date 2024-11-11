@@ -3,7 +3,10 @@ import { Button, TextField, Container, Box, Alert, AlertTitle } from '@mui/mater
 import { Link, useNavigate } from 'react-router-dom';
 import User from '../models/user';
 import {api } from '../helpers/api';
-import '../styling/register.css';
+//test
+
+import '../styling/annotate/sidebar.css';
+
 
 function LoginForm() {
     const navigate = useNavigate();
@@ -27,7 +30,7 @@ function LoginForm() {
       }
     }
 
-  const Login = async (e) => {
+  const Login = async (e: React.SyntheticEvent) => {
     e.preventDefault(); 
     checkValid();
     if (validCredentials === false) {
@@ -48,12 +51,12 @@ function LoginForm() {
         sessionStorage.setItem('username', user.username);
       console.log('Register:', { email, password });
       navigate("/home");
-      } catch (error) {
-      raiseError(error.response.data.detail);
+      } catch (error: unknown) {
+      raiseError((error as any).response.data.detail);
       }
     }
   };
-  const raiseError = (error) => {
+  const raiseError = (error: string) => {
     console.log("error:")
     console.log(error);
     setAlertStatus(true);
