@@ -5,6 +5,7 @@ import Home from '../views/home';
 import Project from '../views/project';
 import ConfigureLabels from '../views/configureLabels';
 import UploadInstructionDocuments from '../views/uploadInstructionDocuments';
+import UploadExtractionDocuments from '../views/uploadExtractionDocuments';
 import Annotate from '../views/annotate/annotate.tsx';
 import ProtectedRoute from './ProtectedRoute';
 
@@ -49,7 +50,15 @@ const AppRouter = () => {
                         </ProtectedRoute>
                     }
                     />
-                     <Route
+                <Route
+                    path="/projects/:projectName/uploadExtractionDocuments"
+                    element={
+                        <ProtectedRoute>
+                        <UploadExtractionDocuments/>
+                        </ProtectedRoute>
+                    }
+                    />
+                <Route
                     path="/projects/:projectName/annotate"
                     element={
                         <ProtectedRoute>

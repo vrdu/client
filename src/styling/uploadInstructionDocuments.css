@@ -120,6 +120,11 @@
   box-sizing: border-box;
 }
 
+.heading {
+  font-size: 32px; /* Adjust the size as needed */
+  font-weight: bold; /* Optional: make the heading bold */
+}
+
 
   
   

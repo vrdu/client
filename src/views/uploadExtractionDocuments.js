@@ -1,15 +1,15 @@
 import React, { useCallback, useState,useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../styling/home.css'; 
 import '../styling/uploadInstructionDocuments.css'; 
+import '../styling/uploadExtractionDocuments.css';
 import { Button, IconButton, CircularProgress, LinearProgress } from '@mui/material';
-import { Link } from 'react-router-dom';
+
 import { useDropzone } from 'react-dropzone';
 import CloseIcon from '@mui/icons-material/Close';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';  // Icon for the checkmark
 import { api } from '../helpers/api';
 
-const UploadInstructionDocuments = () => {
+const UploadExtractionDocuments = () => {
   const projectName = sessionStorage.getItem('projectName');
   const documentName = sessionStorage.getItem('documentName');
   const navigate = useNavigate();
@@ -30,39 +30,39 @@ const UploadInstructionDocuments = () => {
     
   }
 
-  //useEffect to load all documents when loading the website
-useEffect(() => {
-  const fetchDocuments = async () => {
+    //useEffect to load all documents when loading the website
+    useEffect(() => {
+    const fetchDocuments = async () => {
+        
+        try {
+        const username = sessionStorage.getItem('username');
+        const projectName = sessionStorage.getItem('projectName');
+        const response = await api(false).get(`/projects/${username}/${projectName}/documents`, {
+            withCredentials: true,  
+        });
+        // Set the files
+        const files = Array.isArray(response.data) ? response.data : [];
+        console.log("files: " + files);
+        setFiles(files);
+        
+        console.log(response.data)
+        files.forEach(file => {
+            console.log("File name:", file.name);
+        });
+        // Update fileStatuses for each file to indicate they are completed
+        const updatedStatuses = {};
+        files.forEach(file => {
+            updatedStatuses[file.name] = { loading: false, completed: true };
+        });
+        setFileStatuses(updatedStatuses);
     
-    try {
-      const username = sessionStorage.getItem('username');
-      const projectName = sessionStorage.getItem('projectName');
-      const response = await api(false).get(`/projects/${username}/${projectName}/documents`, {
-        withCredentials: true,  
-      });
-       // Set the files
-       const files = Array.isArray(response.data) ? response.data : [];
-       console.log("files: " + files);
-       setFiles(files);
-       
-       console.log(response.data)
-       files.forEach(file => {
-        console.log("File name:", file.name);
-      });
-       // Update fileStatuses for each file to indicate they are completed
-       const updatedStatuses = {};
-       files.forEach(file => {
-         updatedStatuses[file.name] = { loading: false, completed: true };
-       });
-       setFileStatuses(updatedStatuses);
- 
-     } catch (error) {
-       console.error('Error fetching documents:', error);
-     }
-  };
+        } catch (error) {
+        console.error('Error fetching documents:', error);
+        }
+    };
 
-  fetchDocuments();
-}, []);
+    fetchDocuments();
+    }, []);
 
   const handleNameClick = (fileName) => {
     sessionStorage.setItem('documentName', fileName);
@@ -217,31 +217,38 @@ useEffect(() => {
   );
 
   return (
-    <div className="blob">
-      <h1 className="heading">Upload Instruction Documents</h1>
-      <div className="dropzone-container">
-        <div {...getRootProps({ className: 'dropzone' })}>
-          <input {...getInputProps()} />
-          {isDragActive ? (
-            <p>Drop it like its hot!</p>
-          ) : (
-            <p>Drag and drop some files here</p>
-          )}
+    <div className="site-container">
+      <div className="blob">
+        <h1 className="heading">Upload documents to extract</h1>
+        <div className="dropzone-container">
+          <div {...getRootProps({ className: 'dropzone' })}>
+            <input {...getInputProps()} />
+            {isDragActive ? (
+              <p>Drop it like its hot!</p>
+            ) : (
+              <p>Drag and drop some files here</p>
+            )}
+          </div>
+          <aside>
+            <h4>Files:</h4>
+            <ul>{renderFiles()}</ul>
+          </aside>
         </div>
-        <aside>
-          <h4>Files:</h4>
-          <ul>{renderFiles()}</ul>
-        </aside>
+        <div className="buttonContainer">
+
+            <Button variant="contained" color="primary" disabled={files.length === 0}>
+              Start extraction
+            </Button>
+          
+        </div>
+          
       </div>
-      <div className="buttonContainer">
-        <Link to={`/projects/${projectName}/uploadExtractionDocuments`}>
-          <Button variant="contained" color="primary">
-            Upload documents for extraction
-          </Button>
-        </Link>
-      </div>
+          <div className="overview-extractions">
+          <h1 className="heading">overview extractions</h1>
+          
+          </div>
     </div>
   );
 };
 
-export default UploadInstructionDocuments;
+export default UploadExtractionDocuments;
