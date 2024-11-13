@@ -92,9 +92,8 @@ useEffect(() => {
 
       const username = sessionStorage.getItem('username'); 
       const projectName = sessionStorage.getItem('projectName');
-      const concatProjectName = `${username}&${projectName}`;
 
-      await api().post(`/projects/${concatProjectName}/upload`, formData, {
+      await api().post(`/projects/${username}/${projectName}/upload`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         }, withCredentials: true,

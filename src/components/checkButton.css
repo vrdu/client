@@ -1,0 +1,26 @@
+.check-button {
+    border: 1px solid var(--blue);
+    background-color: transparent;
+    width: 20px;
+    height: 20px;
+    border-radius: 2px;
+    padding: 6px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transform: translateY(-4px)
+  }
+  .checked-button {
+    border: 1px solid var(--blue);
+    background-color: transparent;
+    width: 20px;
+    height: 20px;
+    border-radius: 2px;
+    padding: 6px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
