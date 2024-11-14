@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import CheckIcon from '@mui/icons-material/Check';
 import '../components/checkButton.css'
 
-const CheckButton = () => {
+const CheckButton = ({ onClick }) => {
   const [isButtonVisible, setButtonVisible] = useState(false);
 
   const handleButtonClick = () => {
     setButtonVisible(!isButtonVisible); 
+    onClick && onClick();
   };
 
   return (

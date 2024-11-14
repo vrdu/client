@@ -1,4 +1,4 @@
-import React, { useCallback, useState,useEffect } from 'react';
+import React, { useCallback, useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styling/uploadInstructionDocuments.css'; 
 import '../styling/uploadExtractionDocuments.css';
@@ -9,11 +9,13 @@ import { useDropzone } from 'react-dropzone';
 import CloseIcon from '@mui/icons-material/Close';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';  
 import { api } from '../helpers/api';
+import  File  from '../models/file';
 
 const UploadExtractionDocuments = () => {
   const projectName = sessionStorage.getItem('projectName');
   const documentName = sessionStorage.getItem('documentName');
   const navigate = useNavigate();
+
   const [files, setFiles] = useState([]);
   const [fileStatuses, setFileStatuses] = useState({});  // Track upload status for each file
   const [isPopupOpen, setPopupOpen] = useState(false);
@@ -34,7 +36,7 @@ const UploadExtractionDocuments = () => {
   }
   const openPopup = () => setPopupOpen(true);
   const closePopup = () => setPopupOpen(false);
-  const generateUniqueId = () => '_' + Math.random().toString(36).substr(2, 9);
+  
     //useEffect to load all documents when loading the website
     useEffect(() => {
     const fetchDocuments = async () => {
@@ -80,12 +82,12 @@ const UploadExtractionDocuments = () => {
     );
 
     const fileInstances = newFiles.map(fileData => {
+      console.log("fileData: ", fileData);
       fileCounter.current += 1; 
       return new File({
         id: fileCounter.current, 
-        fileName: fileData.name,
-        fileData: fileData,
-        extract: null,
+        file: fileData,
+        extract: false,
         status: { loading: true, completed: false, progress: 0 }, 
       });
     });
@@ -108,12 +110,12 @@ const UploadExtractionDocuments = () => {
 
     try {
       const formData = new FormData();
-      formData.append('files', file);  
+      formData.append('files', file.file);  
 
       const username = sessionStorage.getItem('username'); 
       const projectName = sessionStorage.getItem('projectName');
       
-
+      console.log("formData: ", formData);
       await api().post(`/projects/${username}/${projectName}/upload`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -128,30 +130,50 @@ const UploadExtractionDocuments = () => {
                       : f
                   )
                 );
-              },
-            });
+          },
+      });
 
-            // successful
-            setFiles((prevFiles) =>
-              prevFiles.map((f) =>
-                f.fileName === file.fileName
-                  ? { ...f, status: { ...f.status, loading: false, completed: true, progress: 100 } }
-                  : f
-              )
-            );
-          } catch (error) {
-            console.error(error);
-            
-            // Error
-            setFiles((prevFiles) =>
-              prevFiles.map((f) =>
-                f.fileName === file.fileName
-                  ? { ...f, status: { ...f.status, loading: false, error: true } }
-                  : f
-              )
-            );
-          }
-        };
+      // successful
+      setFiles((prevFiles) =>
+        prevFiles.map((f) =>
+          f.fileName === file.fileName
+            ? { ...f, status: { ...f.status, loading: false, completed: true, progress: 100 } }
+            : f
+        )
+      );
+    } catch (error) {
+      console.error(error);
+      
+      // Error
+      setFiles((prevFiles) =>
+        prevFiles.map((f) =>
+          f.fileName === file.fileName
+            ? { ...f, status: { ...f.status, loading: false, error: true } }
+            : f
+        )
+      );
+    }
+  };
+
+  const handleClickCheckButton = (fileName) => {
+    setFiles((prevFiles) =>
+      prevFiles.map((file) => {
+        if (file.file.name === fileName) {
+          console.log("Toggling extract for file: ", file);
+          file.toggleExtract(); // Call the method directly on the instance
+          return file; // Return the modified instance
+        }
+        return file;
+      })
+    );
+  };
+  
+  
+
+  useEffect(() => {
+    console.log("Updated files: ", files);
+  }, [files]);
+  
 
   const deleteFile = async (fileName) => {
     console.log("fileName: " + fileName);
@@ -183,7 +205,7 @@ const UploadExtractionDocuments = () => {
 
   const renderFiles = () => (
     files.map((file, index) => {
-      const { loading, progress, completed } = fileStatuses[file.name] || {};
+      const { loading, progress, completed } = fileStatuses[file.file.name] || {};
 
       return (
         <li 
@@ -202,19 +224,19 @@ const UploadExtractionDocuments = () => {
             }
           }}
           >
-            <CheckButton onClick={() => handleClickCheckButton(file.name)}/>
+          <CheckButton onClick={() => handleClickCheckButton(file.file.name)} />
             
           <span 
             className="file-name"
-            onClick={() => handleNameClick(file.name)} 
+            onClick={() => handleNameClick(file.file.name)} 
             style={{
-              width: documentName === file.name ? '100%' : '75%'
+              width: documentName === file.file.name ? '100%' : '75%'
             }}
             >
-            {file.name}
+            {file.file.name}
           </span>
           {/* Display progress or checkmark */}
-          <div style={{ width: '30%', textAlign: 'center', visibility: documentName === file.name ? 'hidden' : 'visible' }}>
+          <div style={{ width: '30%', textAlign: 'center', visibility: documentName === file.file.name ? 'hidden' : 'visible' }}>
             {loading ? (
             <CircularProgress size={16} value={progress} />
               ) : completed ? (
@@ -225,14 +247,14 @@ const UploadExtractionDocuments = () => {
               ) : null}
           </div>
 
-          {documentName !== file.name && (
+          {documentName !== file.file.name && (
           <>
           <span> {/* Add loading animation or checkmark here */} </span>
           <IconButton
             aria-label="delete"
             size="small"
             className="close-button"  
-            onClick={() => removeFile(file.name)}
+            onClick={() => removeFile(file.file.name)}
           >
             <CloseIcon style={{ color: 'white', fontSize: '12px' }} />
           </IconButton>

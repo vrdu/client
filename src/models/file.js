@@ -1,11 +1,16 @@
-class file {
-    constructor(data = {}) {
-      this.id = null;
-      this.fileName = null;
-      this.fileData = null;
-      this.extract = null;
-      this.status = null;
-      Object.assign(this, data);
-    }
+class File {
+  constructor(data = {}) {
+    this.id = data.id || null;
+    this.file = data.file || null;
+    this.extract = data.extract || false;
+    this.status = data.status || null;
   }
-  export default file;
+
+  toggleExtract() {
+    this.extract = !this.extract;
+    console.log("Extract: ", this.extract);
+  }
+}
+
+export default File;
+
