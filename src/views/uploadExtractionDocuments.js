@@ -15,14 +15,13 @@ const UploadExtractionDocuments = () => {
   const projectName = sessionStorage.getItem('projectName');
   const documentName = sessionStorage.getItem('documentName');
   const navigate = useNavigate();
-
-  const [files, setFiles] = useState([]);
   const [fileStatuses, setFileStatuses] = useState({});  // Track upload status for each file
   const [isPopupOpen, setPopupOpen] = useState(false);
-  
-  const fileCounter = useRef(0);
-  
   const [errorMessage, setErrorMessage] = useState("");
+  const fileCounter = useRef(0);
+  const [files, setFiles] = useState([]);
+
+  
 
   const raiseError = (error) => {
     console.log("error:")
@@ -92,22 +91,14 @@ const UploadExtractionDocuments = () => {
       });
     });
 
-    setFiles((prevFiles) => [...prevFiles, ...fileInstances]);
-
-    fileInstances.forEach(fileInstance => {
-      uploadFile(fileInstance);
-    });
-  }, [files]);
+    setFiles((prevFiles) => [
+      ...prevFiles.map(f => (f instanceof File ? f : new File(f))), // Convert existing files if necessary
+      ...fileInstances, // Add new instances
+    ]);
+    fileInstances.forEach((file) => uploadFile(file));
+    }, [files]);
 
   const uploadFile = async (file) => {
-    setFiles((prevFiles) =>
-      prevFiles.map((f) =>
-        f.fileName === file.fileName
-          ? { ...f, status: { ...f.status, loading: false, completed: true, progress: 100 } }
-          : f
-      )
-    );
-
     try {
       const formData = new FormData();
       formData.append('files', file.file);  
@@ -123,22 +114,23 @@ const UploadExtractionDocuments = () => {
         onUploadProgress: (progressEvent) => {
           const percentage = Math.round((progressEvent.loaded * 100) / progressEvent.total);
 
-        setFiles((prevFiles) =>
-                  prevFiles.map((f) =>
-                    f.fileName === file.fileName
-                      ? { ...f, status: { ...f.status, loading: true, progress: percentage, completed: false } }
-                      : f
-                  )
-                );
+          setFiles((prevFiles) =>
+            prevFiles.map((f) =>
+              f.file.name === file.file.name 
+                ? new File({ ...f, status: { ...f.status, loading: true, progress: percentage, completed: false } }) 
+                : f instanceof File ? f : new File(f) 
+            )
+          );
+          
           },
       });
 
       // successful
       setFiles((prevFiles) =>
         prevFiles.map((f) =>
-          f.fileName === file.fileName
-            ? { ...f, status: { ...f.status, loading: false, completed: true, progress: 100 } }
-            : f
+          f.file.name === file.file.name
+            ? new File({ ...f, status: { ...f.status, loading: false, completed: true, progress: 100 } })
+            : f instanceof File ? f : new File(f) // Ensure File instances
         )
       );
     } catch (error) {
@@ -147,9 +139,9 @@ const UploadExtractionDocuments = () => {
       // Error
       setFiles((prevFiles) =>
         prevFiles.map((f) =>
-          f.fileName === file.fileName
-            ? { ...f, status: { ...f.status, loading: false, error: true } }
-            : f
+          f.file.name === file.file.name
+            ? new File({ ...f, status: { ...f.status, loading: false, error: true } })
+            : f instanceof File ? f : new File(f) // Ensure File instances
         )
       );
     }
@@ -160,8 +152,8 @@ const UploadExtractionDocuments = () => {
       prevFiles.map((file) => {
         if (file.file.name === fileName) {
           console.log("Toggling extract for file: ", file);
-          file.toggleExtract(); // Call the method directly on the instance
-          return file; // Return the modified instance
+          file.toggleExtract(); 
+          return file; 
         }
         return file;
       })
@@ -185,8 +177,12 @@ const UploadExtractionDocuments = () => {
         data: fileName,
         withCredentials: true,  
       });
-
-    } catch (error) {
+      setFiles((prevFiles) => 
+        prevFiles
+          .filter((file) => file.file.name !== fileName) 
+          .map((file) => (file instanceof File ? file : new File(file))) 
+      );
+      } catch (error) {
       raiseError(error.response.data.detail);
       
     }
