@@ -10,6 +10,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';  
 import { api } from '../helpers/api';
 import  File  from '../models/file';
+import Extraction from '../models/extraction';
 
 const UploadExtractionDocuments = () => {
   const projectName = sessionStorage.getItem('projectName');
@@ -20,7 +21,7 @@ const UploadExtractionDocuments = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const fileCounter = useRef(0);
   const [files, setFiles] = useState([]);
-
+  const [extractions, setExtractions] = useState([]);
   
 
   const raiseError = (error) => {
@@ -261,6 +262,53 @@ const UploadExtractionDocuments = () => {
     })
   );
 
+  
+  const sendExtractionRequest = async () => {
+    console.log("in send extraction request");
+    const newExtraction = new Extraction({
+      name: `Extraction-${Date.now()}`,
+      documentNames: [],
+    });
+
+    const remainingFiles = [];
+    files.forEach((file) => {
+      if (file.extract) {
+        newExtraction.documentNames.push(file.file.name); 
+      } else {
+        remainingFiles.push(file); 
+      }
+    });
+
+    setFiles(remainingFiles);
+
+    setExtractions([...extractions, newExtraction]);
+    console.log("Extractions: ", extractions);
+    try {
+      const username = sessionStorage.getItem('username'); 
+      const projectName = sessionStorage.getItem('projectName');
+      
+      await api().post(`/projects/${username}/${projectName}/extractions`, {
+        data: newExtraction,
+        withCredentials: true,
+      });
+      console.log('Extraction sent successfully:', newExtraction);
+    } catch (error) {
+      console.error('Error sending extraction to backend:', error);
+    }
+
+
+  }
+
+
+  const handleExtraction = () =>{
+    for (let i = 0; i < files.length; i++) {
+      if (files[i].extract) {
+        sendExtractionRequest();
+        return;
+      }
+      throw new Error("No files selected for extraction");
+    }
+  };
   return (
     <div className="site-container">
       <div className="blob">
@@ -281,24 +329,34 @@ const UploadExtractionDocuments = () => {
         </div>
         <div className="buttonContainer">
 
-            <Button variant="contained" color="primary" disabled={files.length === 0}>
+            <Button variant="contained" color="primary" disabled={files.length === 0} onClick={()=> handleExtraction()}>
               Start extraction
             </Button>
           
         </div>
           
       </div>
-          <div className="overview-extractions">
-            <h1 className="heading">overview extractions</h1>
-            <Button variant="contained" color="primary" onClick= {openPopup} >
-              One PopUp One Extraction
-            </Button>
-          </div>
-          <Popup isOpen={isPopupOpen} onClose={closePopup}>
-           
-          </Popup>
+      <div className="overview-extractions">
+        <h1 className="heading">overview extractions</h1>
+        <div className="extraction-container">
+          <ul>
+            {extractions.map((extraction, index) => (
+              <li key={index}>
+                <span
+                  onClick={openPopup}
+                  className="clickable-index"
+                >
+                  {extraction.name}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <Popup isOpen={isPopupOpen} onClose={closePopup}>
+        
+        </Popup>
+      </div>
     </div>
-
   );
 };
 

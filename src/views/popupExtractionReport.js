@@ -1,6 +1,7 @@
 // Popup.js or Popup.tsx
 import React from 'react';
 import '../styling/popUpExtractionReport.css';
+
 const Popup = ({ isOpen, onClose, children }) => {
   if (!isOpen) return null;
 
