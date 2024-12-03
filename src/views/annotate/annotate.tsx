@@ -152,11 +152,6 @@ useEffect(() => {
   // deleting annotations (bonus)
 
 
-  const resetHighlights = () => {
-    setHighlights([]);
-  };
-
-
   const scrollViewerTo = useRef((highlight: IHighlight) => {
     console.log("scrolling to", highlight);
     // Implement scrolling logic here
@@ -232,7 +227,7 @@ useEffect(() => {
     <div className="App" style={{ display: "flex", height: "100vh" }}>
       <Sidebar
         highlights={highlights}
-        resetHighlights={resetHighlights}
+
       />
      <div style={{ height: "100vh", width: "70vw", position: "relative" }}>
   {url ? (

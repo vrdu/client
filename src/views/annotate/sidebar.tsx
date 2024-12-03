@@ -1,9 +1,9 @@
 import type { IHighlight } from "react-pdf-highlighter";
 import React, { useState } from 'react';
+import { api } from '../../helpers/api';  
 
 interface Props {
   highlights: Array<IHighlight>;
-  resetHighlights: () => void;
 }
 
 const updateHash = (highlight: IHighlight) => {
@@ -11,10 +11,27 @@ const updateHash = (highlight: IHighlight) => {
   document.location.hash = `highlight-${highlight.id}`;
 };
 
+const safeAnnotations = async () => {
+  try {
+    const formData = new FormData();
+
+    const username = sessionStorage.getItem('username'); 
+    const projectName = sessionStorage.getItem('projectName');
+    const documentName = sessionStorage.getItem('documentName');
+
+    console.log("formData: ", formData);
+      await api().post(`/projects/${username}/${projectName}/${documentName}/acceptInstructions`, {
+         withCredentials: true,
+        });
+      console.log("Annotations saved successfully");
+    } catch (error) {
+      console.error("Error saving annotations", error);
+    }
+  }
 
 export function Sidebar({
   highlights,
-  resetHighlights,
+  
 }: Props) {
 
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
@@ -74,13 +91,13 @@ export function Sidebar({
 
 
       
-      {highlights.length > 0 ? (
-        <div style={{ padding: "1rem" }}>
-          <button type="button" onClick={resetHighlights}>
-            Reset highlights
-          </button>
-        </div>
-      ) : null}
+      
+      <div style={{ padding: "1rem" }}>
+        <button type="button" onClick={safeAnnotations}>
+          Save Annotations
+        </button>
+      </div>
+       
     </div>
   );
 }
