@@ -1,6 +1,7 @@
 import type { IHighlight } from "react-pdf-highlighter";
 import React, { useState } from 'react';
 import { api } from '../../helpers/api';  
+import { useNavigate } from "react-router-dom"; 
 
 interface Props {
   highlights: Array<IHighlight>;
@@ -11,23 +12,6 @@ const updateHash = (highlight: IHighlight) => {
   document.location.hash = `highlight-${highlight.id}`;
 };
 
-const safeAnnotations = async () => {
-  try {
-    const formData = new FormData();
-
-    const username = sessionStorage.getItem('username'); 
-    const projectName = sessionStorage.getItem('projectName');
-    const documentName = sessionStorage.getItem('documentName');
-
-    console.log("formData: ", formData);
-      await api().post(`/projects/${username}/${projectName}/${documentName}/acceptInstructions`, {
-         withCredentials: true,
-        });
-      console.log("Annotations saved successfully");
-    } catch (error) {
-      console.error("Error saving annotations", error);
-    }
-  }
 
 export function Sidebar({
   highlights,
@@ -35,7 +19,27 @@ export function Sidebar({
 }: Props) {
 
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const navigate = useNavigate();
 
+  const safeAnnotations = async () => {
+    try {
+      const formData = new FormData();
+  
+      const username = sessionStorage.getItem('username'); 
+      const projectName = sessionStorage.getItem('projectName');
+      const documentName = sessionStorage.getItem('documentName');
+  
+        await api(false).post(`/projects/${username}/${projectName}/${documentName}/setAnnotate`, 
+          {},
+          {
+           withCredentials: true,
+          });
+        console.log("Annotations saved successfully and set as Instruction");
+        navigate(`/projects/a/uploadInstructionDocuments`);    } catch (error) {
+        console.error("Error saving annotations", error);
+      }
+    }
+  
   return (
     <div className="sidebar" style={{ width: "25vw" }}>
       <div className="description" style={{ padding: "1rem" }}>

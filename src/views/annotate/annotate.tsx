@@ -238,7 +238,7 @@ useEffect(() => {
           enableAreaSelection={(event) => event.altKey}
           onScrollChange={resetHash}
           scrollRef={(scrollTo) => {
-            scrollViewerTo.current = scrollTo;
+            //scrollViewerTo.current = scrollTo;
             scrollToHighlightFromHash();
           }}
           onSelectionFinished={(
