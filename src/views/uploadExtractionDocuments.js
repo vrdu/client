@@ -9,14 +9,14 @@ import { useDropzone } from 'react-dropzone';
 import CloseIcon from '@mui/icons-material/Close';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';  
 import { api } from '../helpers/api';
-import  File  from '../models/file';
+import  CustomFile  from '../models/file';
 import Extraction from '../models/extraction';
 
 const UploadExtractionDocuments = () => {
   const projectName = sessionStorage.getItem('projectName');
   const documentName = sessionStorage.getItem('documentName');
   const navigate = useNavigate();
-  const [fileStatuses, setFileStatuses] = useState({});  // Track upload status for each file
+  const [fileStatuses, setFileStatuses] = useState({});  
   const [isPopupOpen, setPopupOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const fileCounter = useRef(0);
@@ -36,6 +36,9 @@ const UploadExtractionDocuments = () => {
   }
   const openPopup = () => setPopupOpen(true);
   const closePopup = () => setPopupOpen(false);
+  
+  
+
   
     //useEffect to load all documents when loading the website
     useEffect(() => {
@@ -72,37 +75,36 @@ const UploadExtractionDocuments = () => {
     }, []);
 
   const handleNameClick = (fileName) => {
+    console.log("fileName: ", fileName);
     sessionStorage.setItem('documentName', fileName);
     navigate(`/projects/${projectName}/annotate`);
   };
 
   const onDrop = useCallback((acceptedFiles) => {
     const newFiles = acceptedFiles.filter(
-      file => !files.some(f => f.fileName === file.name)
+      file => !files.some(f => f.name === file.name) // Match on `name`
     );
-
+  
     const fileInstances = newFiles.map(fileData => {
       console.log("fileData: ", fileData);
       fileCounter.current += 1; 
-      return new File({
-        id: fileCounter.current, 
-        file: fileData,
+      return new CustomFile(fileData, { // Pass the native File object as the first argument
+        id: fileCounter.current,
         extract: false,
-        status: { loading: true, completed: false, progress: 0 }, 
+        status: { loading: true, completed: false, progress: 0 },
       });
     });
-
-    setFiles((prevFiles) => [
-      ...prevFiles.map(f => (f instanceof File ? f : new File(f))), // Convert existing files if necessary
-      ...fileInstances, // Add new instances
-    ]);
+    console.log("fileInstances: ", fileInstances.fileName);
+    // Add the new `CustomFile` instances to the state
+    setFiles((prevFiles) => [...prevFiles, ...fileInstances]);
     fileInstances.forEach((file) => uploadFile(file));
     }, [files]);
 
   const uploadFile = async (file) => {
     try {
+
       const formData = new FormData();
-      formData.append('files', file.file);  
+      formData.append('files', file);  
 
       const username = sessionStorage.getItem('username'); 
       const projectName = sessionStorage.getItem('projectName');
@@ -117,9 +119,9 @@ const UploadExtractionDocuments = () => {
 
           setFiles((prevFiles) =>
             prevFiles.map((f) =>
-              f.file.name === file.file.name 
-                ? new File({ ...f, status: { ...f.status, loading: true, progress: percentage, completed: false } }) 
-                : f instanceof File ? f : new File(f) 
+              f.name === file.name 
+                ? new CustomFile({ ...f, status: { ...f.status, loading: true, progress: percentage, completed: false } }) 
+                : f instanceof CustomFile ? f : new CustomFile(f) 
             )
           );
           
@@ -129,9 +131,9 @@ const UploadExtractionDocuments = () => {
       // successful
       setFiles((prevFiles) =>
         prevFiles.map((f) =>
-          f.file.name === file.file.name
-            ? new File({ ...f, status: { ...f.status, loading: false, completed: true, progress: 100 } })
-            : f instanceof File ? f : new File(f) // Ensure File instances
+          f.name === file.name
+            ? new CustomFile({ ...f, status: { ...f.status, loading: false, completed: true, progress: 100 } })
+            : f instanceof CustomFile ? f : new CustomFile(f) // Ensure File instances
         )
       );
     } catch (error) {
@@ -140,9 +142,9 @@ const UploadExtractionDocuments = () => {
       // Error
       setFiles((prevFiles) =>
         prevFiles.map((f) =>
-          f.file.name === file.file.name
-            ? new File({ ...f, status: { ...f.status, loading: false, error: true } })
-            : f instanceof File ? f : new File(f) // Ensure File instances
+          f.name === file.name
+            ? new CustomFile({ ...f, status: { ...f.status, loading: false, error: true } })
+            : f instanceof CustomFile ? f : new CustomFile(f) // Ensure File instances
         )
       );
     }
@@ -151,7 +153,7 @@ const UploadExtractionDocuments = () => {
   const handleClickCheckButton = (fileName) => {
     setFiles((prevFiles) =>
       prevFiles.map((file) => {
-        if (file.file.name === fileName) {
+        if (file.name === fileName) {
           console.log("Toggling extract for file: ", file);
           file.toggleExtract(); 
           return file; 
@@ -161,8 +163,6 @@ const UploadExtractionDocuments = () => {
     );
   };
   
-  
-
   useEffect(() => {
     console.log("Updated files: ", files);
   }, [files]);
@@ -180,8 +180,8 @@ const UploadExtractionDocuments = () => {
       });
       setFiles((prevFiles) => 
         prevFiles
-          .filter((file) => file.file.name !== fileName) 
-          .map((file) => (file instanceof File ? file : new File(file))) 
+          .filter((file) => file.name !== fileName) 
+          .map((file) => (file instanceof CustomFile ? file : new CustomFile(file))) 
       );
       } catch (error) {
       raiseError(error.response.data.detail);
@@ -197,12 +197,13 @@ const UploadExtractionDocuments = () => {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: '.pdf,.doc,.docx,.txt', 
+    accept: '.pdf', 
+   
   });
 
   const renderFiles = () => (
     files.map((file, index) => {
-      const { loading, progress, completed } = fileStatuses[file.file.name] || {};
+      const { loading, progress, completed } = fileStatuses[file.name] || {};
 
       return (
         <li 
@@ -221,19 +222,30 @@ const UploadExtractionDocuments = () => {
             }
           }}
           >
-          <CheckButton onClick={() => handleClickCheckButton(file.file.name)} />
+          <CheckButton
+            checked={file.extract}
+            onClick={() => {
+              setFiles((prevFiles) =>
+                prevFiles.map((f) =>
+                  f.name === file.name ? { ...f, extract: !f.extract } : f
+                )
+              );
+            }}
+          />
+
+
             
           <span 
             className="file-name"
-            onClick={() => handleNameClick(file.file.name)} 
+            onClick={() => handleNameClick(file.name)} 
             style={{
-              width: documentName === file.file.name ? '100%' : '75%'
+              width: documentName === file.name ? '100%' : '75%'
             }}
             >
-            {file.file.name}
+            {file.name}
           </span>
           {/* Display progress or checkmark */}
-          <div style={{ width: '30%', textAlign: 'center', visibility: documentName === file.file.name ? 'hidden' : 'visible' }}>
+          <div style={{ width: '30%', textAlign: 'center', visibility: documentName === file.name ? 'hidden' : 'visible' }}>
             {loading ? (
             <CircularProgress size={16} value={progress} />
               ) : completed ? (
@@ -244,14 +256,14 @@ const UploadExtractionDocuments = () => {
               ) : null}
           </div>
 
-          {documentName !== file.file.name && (
+          {documentName !== file.name && (
           <>
           <span> {/* Add loading animation or checkmark here */} </span>
           <IconButton
             aria-label="delete"
             size="small"
             className="close-button"  
-            onClick={() => removeFile(file.file.name)}
+            onClick={() => removeFile(file.name)}
           >
             <CloseIcon style={{ color: 'white', fontSize: '12px' }} />
           </IconButton>
@@ -273,7 +285,7 @@ const UploadExtractionDocuments = () => {
     const remainingFiles = [];
     files.forEach((file) => {
       if (file.extract) {
-        newExtraction.documentNames.push(file.file.name); 
+        newExtraction.documentNames.push(file.name); 
       } else {
         remainingFiles.push(file); 
       }
@@ -287,7 +299,7 @@ const UploadExtractionDocuments = () => {
       const username = sessionStorage.getItem('username'); 
       const projectName = sessionStorage.getItem('projectName');
       
-      await api().post(`/projects/${username}/${projectName}/extractions`, {
+      await api(false).post(`/projects/${username}/${projectName}/extractions`, {
         data: newExtraction,
         withCredentials: true,
       });

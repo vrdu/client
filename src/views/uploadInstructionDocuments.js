@@ -151,7 +151,7 @@ useEffect(() => {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: '.pdf,.doc,.docx,.txt', 
+    accept: '.pdf', 
   });
 
   const renderFiles = () => (
