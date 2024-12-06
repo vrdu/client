@@ -22,6 +22,7 @@ const UploadExtractionDocuments = () => {
   const fileCounter = useRef(0);
   const [files, setFiles] = useState([]);
   const [extractions, setExtractions] = useState([]);
+  const [activeExtraction, setActiveExtraction] = useState(null); 
   
 
   const raiseError = (error) => {
@@ -34,8 +35,15 @@ const UploadExtractionDocuments = () => {
     }, 3000);
     
   }
-  const openPopup = () => setPopupOpen(true);
-  const closePopup = () => setPopupOpen(false);
+  const openPopup = (extraction) => {
+    setActiveExtraction(extraction);
+    setPopupOpen(true);
+  };
+
+  const closePopup = () => {
+    setPopupOpen(false);
+    setActiveExtraction(null);
+  };
   
   
 
@@ -43,12 +51,12 @@ const UploadExtractionDocuments = () => {
     //useEffect to load all documents when loading the website
     useEffect(() => {
     const fetchDocuments = async () => {
-        
+        //noProblemWithCredentials
         try {
         const username = sessionStorage.getItem('username');
         const projectName = sessionStorage.getItem('projectName');
-        const response = await api(false).get(`/projects/${username}/${projectName}/documentsAndExtractions`, {
-            withCredentials: true,  
+        const response = await api(false).get(`/projects/${username}/${projectName}/documentsAndExtractions`,{
+          withCredentials: true,  
         });
         // Set the files
         const files = Array.isArray(response.data) ? response.data : [];
@@ -101,19 +109,24 @@ const UploadExtractionDocuments = () => {
     }, [files]);
 
   const uploadFile = async (file) => {
+    setFileStatuses((prevStatuses) => ({
+      ...prevStatuses,
+      [file.name]: { loading: true, completed: false, progress: 0 },
+    }));
+
     try {
 
       const formData = new FormData();
-      formData.append('files', file);  
-
+      formData.append('files', file.originalFile);  
+      console.log("file in formData:",formData);
       const username = sessionStorage.getItem('username'); 
       const projectName = sessionStorage.getItem('projectName');
       
       console.log("formData: ", formData);
-      await api().post(`/projects/${username}/${projectName}/upload`, formData, {
+      await api().post(`/projects/${username}/${projectName}/uploadExtraction`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
-        }, withCredentials: true,
+        },withCredentials: true,
         onUploadProgress: (progressEvent) => {
           const percentage = Math.round((progressEvent.loaded * 100) / progressEvent.total);
 
@@ -174,8 +187,8 @@ const UploadExtractionDocuments = () => {
     try {
       const username = sessionStorage.getItem('username');
       const projectName = sessionStorage.getItem('projectName');
-      await api(false).delete(`/projects/${username}/${projectName}/delete`, {
-        data: fileName,
+      await api(false).delete(`/projects/${username}/${projectName}/delete`, 
+        fileName,{
         withCredentials: true,  
       });
       setFiles((prevFiles) => 
@@ -299,8 +312,8 @@ const UploadExtractionDocuments = () => {
       const username = sessionStorage.getItem('username'); 
       const projectName = sessionStorage.getItem('projectName');
       
-      await api(false).post(`/projects/${username}/${projectName}/extractions`, {
-        data: newExtraction,
+      await api(false).post(`/projects/${username}/${projectName}/extractions`, 
+        newExtraction,{
         withCredentials: true,
       });
       console.log('Extraction sent successfully:', newExtraction);
@@ -355,7 +368,7 @@ const UploadExtractionDocuments = () => {
             {extractions.map((extraction, index) => (
               <li key={index}>
                 <span
-                  onClick={openPopup}
+                  onClick={() => openPopup(extraction)} // Pass the extraction object
                   className="clickable-index"
                 >
                   {extraction.name}
@@ -364,9 +377,11 @@ const UploadExtractionDocuments = () => {
             ))}
           </ul>
         </div>
-        <Popup isOpen={isPopupOpen} onClose={closePopup}>
-        
-        </Popup>
+        <Popup
+        isOpen={isPopupOpen}
+        onClose={closePopup}
+        extraction={activeExtraction} // Pass the active extraction to Popup
+        />
       </div>
     </div>
   );

@@ -4,28 +4,36 @@ import '../styling/popUpExtractionReport.css';
 import Extraction from '../models/extraction';
 import { api } from '../helpers/api';
 
-const Popup = ({ isOpen, onClose, children }) => {
-  const [extraction, setExtraction] = useState(null);
+const Popup = ({ isOpen, onClose, extraction: initialExtraction }) => {
+  const [extraction, setExtraction] = useState(initialExtraction);
 
   useEffect(() => {
     const fetchDocumentsAndReport = async () => {
-      
+      if (!initialExtraction) return;
+
+      console.log("Fetching documents and report...");
       try {
         const username = sessionStorage.getItem('username');
         const projectName = sessionStorage.getItem('projectName');
-        const extractionName = sessionStorage.getItem('extractionName');
-        const response = await api(false).get(`/projects/${username}/${projectName}/${extractionName}/documentsAndReport`, {
-          withCredentials: true,  
-        });
-        const extractionData = new Extraction(response.data);
-        setExtraction(extractionData);
+        const response = await api(false).get(
+          `/projects/${username}/${projectName}/${initialExtraction.name}/documentsAndReport`,
+          {
+            withCredentials: true,
+          }
+        );
 
-       } catch (error) {
-         console.error('Error fetching documents:', error);
-       }
+        // Assuming response.data contains updated extraction details
+        setExtraction((prevExtraction) => ({
+          ...prevExtraction,
+          ...response.data, // Merge additional data into the current extraction state
+        }));
+      } catch (error) {
+        console.error('Error fetching documents:', error);
+      }
     };
+
     fetchDocumentsAndReport();
-  }, []);
+  }, [initialExtraction]);
 
   //store them in button with corrected true/false if clicked on one, the view to correct the extraction will be shown
 
