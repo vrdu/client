@@ -7,6 +7,7 @@ import ConfigureLabels from '../views/configureLabels';
 import UploadInstructionDocuments from '../views/uploadInstructionDocuments';
 import UploadExtractionDocuments from '../views/uploadExtractionDocuments';
 import Annotate from '../views/annotate/annotate.tsx';
+import CorrectExtraction from '../views/correctExtraction/correctExtraction.tsx';
 import ProtectedRoute from './ProtectedRoute';
 
 
@@ -63,6 +64,14 @@ const AppRouter = () => {
                     element={
                         <ProtectedRoute>
                         <Annotate/>
+                        </ProtectedRoute>
+                    }
+                    />
+                    <Route
+                    path="/projects/:projectName/correctExtraction"
+                    element={
+                        <ProtectedRoute>
+                        <CorrectExtraction/>
                         </ProtectedRoute>
                     }
                     />

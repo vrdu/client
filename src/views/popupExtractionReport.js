@@ -1,12 +1,15 @@
 // Popup.js or Popup.tsx
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../styling/popUpExtractionReport.css';
 import Extraction from '../models/extraction';
 import { api } from '../helpers/api';
 
 const Popup = ({ isOpen, onClose, extraction: initialExtraction }) => {
   const [extraction, setExtraction] = useState(initialExtraction);
-
+  const projectName = sessionStorage.getItem('projectName');
+  const navigate = useNavigate(); 
+  
   useEffect(() => {
     const fetchDocumentsAndReport = async () => {
       if (!initialExtraction) return;
@@ -21,7 +24,7 @@ const Popup = ({ isOpen, onClose, extraction: initialExtraction }) => {
             withCredentials: true,
           }
         );
-
+        console.log('Documents and report fetched:', response.data);
         // Assuming response.data contains updated extraction details
         setExtraction((prevExtraction) => ({
           ...prevExtraction,
@@ -35,7 +38,10 @@ const Popup = ({ isOpen, onClose, extraction: initialExtraction }) => {
     fetchDocumentsAndReport();
   }, [initialExtraction]);
 
-  //store them in button with corrected true/false if clicked on one, the view to correct the extraction will be shown
+  const openDocument = (docCorrect) => {
+    sessionStorage.setItem('docCorrect', docCorrect);
+    navigate(`/projects/${projectName}/correctExtraction`);
+  };
 
   if (!isOpen) return null;
 
@@ -53,7 +59,12 @@ const Popup = ({ isOpen, onClose, extraction: initialExtraction }) => {
           <p>ANLS: {extraction.anls}</p>
           <ul>
             {extraction.documentNames.map((doc, index) => (
-              <li key={index}>{doc}</li>
+             <span
+             onClick={() => openDocument(doc)} 
+             className="clickable-index"
+           >
+             {doc}
+           </span>
             ))}
           </ul>
         </div>
