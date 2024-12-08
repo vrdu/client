@@ -72,10 +72,10 @@ function CorrectExtraction() {
           try {
               const username = sessionStorage.getItem('username');
               const projectName = sessionStorage.getItem('projectName');
-              const documentName = sessionStorage.getItem('documentName');
+              const documentName = sessionStorage.getItem('docCorrect');
 
               const response = await api(false).get(
-                  `/projects/${username}/${projectName}/${documentName}/annotate`,
+                  `/projects/${username}/${projectName}/${documentName}/correct`,
                   { withCredentials: true }
               );
               

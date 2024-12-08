@@ -35,7 +35,8 @@ export function Sidebar({
            withCredentials: true,
           });
         console.log("Annotations saved successfully and set as Instruction");
-        navigate(`/projects/a/uploadInstructionDocuments`);    } catch (error) {
+        navigate(`/projects/${projectName}/uploadInstructionDocuments`);    
+      } catch (error) {
         console.error("Error saving annotations", error);
       }
     }

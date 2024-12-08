@@ -61,18 +61,15 @@ const UploadExtractionDocuments = () => {
         // Set the files
         const files = Array.isArray(response.data) ? response.data : [];
         console.log("files: " + files);
-        setFiles(files);
+        setExtractions(files);
         
-        console.log(response.data)
-        files.forEach(file => {
-            console.log("File name:", file.name);
-        });
-        // Update fileStatuses for each file to indicate they are completed
-        const updatedStatuses = {};
-        files.forEach(file => {
-            updatedStatuses[file.name] = { loading: false, completed: true };
-        });
-        setFileStatuses(updatedStatuses);
+        console.log(response.data.extractions);
+        const extractionData = Array.isArray(response.data.extractions) ? response.data.extractions : [];
+        console.log("extractionData: " + extractionData.extractionName);
+        // Set the state for extractions
+        setExtractions(extractionData);
+        
+        
     
         } catch (error) {
         console.error('Error fetching documents:', error);
