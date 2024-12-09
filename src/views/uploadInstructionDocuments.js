@@ -93,7 +93,7 @@ useEffect(() => {
       const username = sessionStorage.getItem('username'); 
       const projectName = sessionStorage.getItem('projectName');
       //can be combined with uploadExtraction when here is updated to clas
-      await api().post(`/projects/${username}/${projectName}/uploadInsutruction`, formData, {
+      await api().post(`/projects/${username}/${projectName}/uploadInstruction`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         }, withCredentials: true,
