@@ -11,6 +11,8 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { api } from '../helpers/api';
 import  CustomFile  from '../models/file';
 import Extraction from '../models/extraction';
+import CheckIcon from '@mui/icons-material/Check';
+
 
 const UploadExtractionDocuments = () => {
   const projectName = sessionStorage.getItem('projectName');
@@ -84,38 +86,99 @@ const UploadExtractionDocuments = () => {
     sessionStorage.setItem('documentName', fileName);
     navigate(`/projects/${projectName}/annotate`);
   };
-
-  const onDrop = useCallback((acceptedFiles) => {
-    const newFiles = acceptedFiles.filter(
-      file => !files.some(f => f.name === file.name) // Match on `name`
-    );
+  const readFileContent = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
   
+      // Define the callback for when the file is read
+      reader.onload = (event) => {
+        resolve(event.target.result); // `result` contains the file content
+      };
+  
+      // Handle errors
+      reader.onerror = (error) => {
+        reject(error);
+      };
+  
+      // Read the file as text
+      reader.readAsText(file);
+    });
+  };
+
+  const onDrop = useCallback(
+    async (acceptedFiles) => {
+    const newFiles = []
+  
+    for (const fileData of acceptedFiles) {
+      const isTxt = fileData.name.endsWith('.txt');
+      const baseName = fileData.name.replace(/\.txt$/, '');
+      const matchingPdf = files.find(f => f.name === `${baseName}.pdf`);
+
+      if (isTxt) {
+        if (matchingPdf) {
+          console.log(`Found matching .pdf for ${fileData.name}. Updating extraction results...`);
+          const content = await readFileContent(fileData);
+          console.log(`Content of ${fileData.name}:`, content);
+          // Update the existing `.pdf` file instance with `extractionResults`
+          const updatedFile = new CustomFile({ ...matchingPdf, extractionResults: content });
+
+          setFiles((prevFiles) =>
+            prevFiles.map((f) =>
+              f.name === matchingPdf.name ? updatedFile : f
+            )
+          );
+
+          console.log("updatedFile: ", updatedFile);
+
+          // Make call to uploadFile here for the updated instance
+          if (updatedFile) {
+            console.log(`Uploading updated file: ${updatedFile.originalFile.extractionResults}`);
+            await uploadFile(updatedFile);
+          }
+        } else {
+          console.warn(`No matching .pdf found for ${fileData.name}. Skipping.`);
+        }
+      } else {
+        // Handle `.pdf` and other file types normally
+        newFiles.push(fileData);
+      }
+    };
+
     const fileInstances = newFiles.map(fileData => {
-      console.log("fileData: ", fileData);
       fileCounter.current += 1; 
       return new CustomFile(fileData, { // Pass the native File object as the first argument
         id: fileCounter.current,
         extract: false,
+        extractionResults: null,
         status: { loading: true, completed: false, progress: 0 },
       });
     });
-    console.log("fileInstances: ", fileInstances.fileName);
     // Add the new `CustomFile` instances to the state
     setFiles((prevFiles) => [...prevFiles, ...fileInstances]);
     fileInstances.forEach((file) => uploadFile(file));
-    }, [files]);
+    }, [files]
+  );
+  
 
   const uploadFile = async (file) => {
     setFileStatuses((prevStatuses) => ({
       ...prevStatuses,
       [file.name]: { loading: true, completed: false, progress: 0 },
+      
     }));
 
     try {
 
       const formData = new FormData();
-      formData.append('files', file.originalFile);  
-      console.log("file in formData:",formData);
+      const validFile = new File([file.originalFile], file.originalFile.name, { type: file.originalFile.type });
+      formData.append('files', validFile);  
+      console.log(validFile instanceof File)
+      // Add extractionResults as a JSON string
+      const extractionResults = file.originalFile.extractionResults;
+
+      formData.append('extractionResults', JSON.stringify(extractionResults));
+
+
       const username = sessionStorage.getItem('username'); 
       const projectName = sessionStorage.getItem('projectName');
       
@@ -205,11 +268,14 @@ const UploadExtractionDocuments = () => {
   deleteFile(fileName);
 }
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    accept: '.pdf', 
-   
-  });
+const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  onDrop,
+  accept: {
+    'application/pdf': ['.pdf'],
+    'text/plain': ['.txt'],
+  },
+});
+
 
   const renderFiles = () => (
     files.map((file, index) => {
@@ -244,7 +310,6 @@ const UploadExtractionDocuments = () => {
           />
 
 
-            
           <span 
             className="file-name"
             onClick={() => handleNameClick(file.name)} 
@@ -265,7 +330,19 @@ const UploadExtractionDocuments = () => {
             </div>
               ) : null}
           </div>
-
+          <div className="extraction-indicator-container">
+            {file.originalFile.extractionResults && (
+              <>
+                <div className="extraction-indicator">
+                  <CheckIcon className="check-icon-white" />
+                </div>
+                <div className="extraction-indicator-tooltip">
+                  <span>results</span>
+                </div>
+              </>
+            )}
+          </div>
+                  
           {documentName !== file.name && (
           <>
           <span> {/* Add loading animation or checkmark here */} </span>

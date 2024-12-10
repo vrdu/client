@@ -61,6 +61,71 @@
     align-items: flex-start; 
     margin-bottom: 10px; 
   }
-
+  .file-name {
+    cursor: pointer;
+  }
+  
+  .progress-container {
+    width: 30%;
+    text-align: center;
+  }
+  
+  .upload-status {
+    display: flex;
+    align-items: center;
+  }
+  
+  .check-icon {
+    color: lightgreen;
+  }
+  
+  .upload-text {
+    margin-left: 5px;
+  }
+  
+  .extraction-indicator-container {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+  }
+  
+  .extraction-indicator {
+    width: 20px;
+    height: 20px;
+    background-color: green;
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+  }
+  
+  .check-icon-white {
+    color: white;
+    font-size: 16px;
+  }
+  
+  .extraction-tooltip {
+    position: absolute;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: white;
+    color: black;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    white-space: nowrap;
+    display: none; /* Initially hidden */
+    z-index: 10;
+  }
+  
+  .extraction-indicator:hover .extraction-tooltip {
+    display: block; /* Show tooltip on hover */
+  }
+  
   
 

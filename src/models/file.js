@@ -12,6 +12,7 @@ class CustomFile {
     // Add custom properties
     this.id = data.id || null;
     this.extract = data.extract || true;
+    this.extractionResults = data.extractionResults || null;
     this.status = data.status || { loading: false, completed: false, progress: 0 };
   }
 
