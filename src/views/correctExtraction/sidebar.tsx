@@ -1,105 +1,100 @@
 import type { IHighlight } from "react-pdf-highlighter";
-import React, { useState } from 'react';
+import React, { useState, useEffect  } from 'react';
 import { api } from '../../helpers/api';  
 import { useNavigate } from "react-router-dom"; 
 
 interface Props {
   highlights: Array<IHighlight>;
 }
-
-const updateHash = (highlight: IHighlight) => {
-  console.log("Updating hash", highlight.id);
-  document.location.hash = `highlight-${highlight.id}`;
-};
-
+type DataType = Record<string, string>;
 
 export function Sidebar({
   highlights,
   
 }: Props) {
 
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const navigate = useNavigate();
+  const [data, setData] = useState<DataType>({});
 
-  const safeAnnotations = async () => {
+  const safeCorrection = async () => {
     try {
       const formData = new FormData();
+      
+      Object.entries(data).forEach(([key, value]) => {
+        formData.append(key, value);
+      });
   
       const username = sessionStorage.getItem('username'); 
       const projectName = sessionStorage.getItem('projectName');
-      const documentName = sessionStorage.getItem('documentName');
+      const documentName = sessionStorage.getItem('docCorrect');
   
-        await api(false).post(`/projects/${username}/${projectName}/${documentName}/setAnnotate`, 
-          {},
+        await api(false).post(`/projects/${username}/${projectName}/${documentName}/setCorrection`, 
+          {formData},
           {
            withCredentials: true,
           });
         console.log("Annotations saved successfully and set as Instruction");
-        navigate(`/projects/${projectName}/uploadInstructionDocuments`);    
+        navigate(`/projects/${projectName}/uploadExtractionDocuments`);    
       } catch (error) {
         console.error("Error saving annotations", error);
       }
     }
+
+    const getCorrections = async () => {
+      try {
+    
+        const username = sessionStorage.getItem('username'); 
+        const projectName = sessionStorage.getItem('projectName');
+        const documentName = sessionStorage.getItem('docCorrect');
+    
+        const response = await api(false).get(`/projects/${username}/${projectName}/${documentName}/getCorrection`, 
+            {
+             withCredentials: true,
+            });
+          console.log("Annotations saved successfully and set as Instruction");
+          setData(response.data);    
+        } catch (error) {
+          console.error("Error saving annotations", error);
+        }
+      }
+      useEffect(() => {
+        getCorrections();
+      }, []); 
+
+     const handleChange = (key: string, value: string) => {
+    // Update the state when a value is edited
+    setData((prevData) => ({
+      ...prevData,
+      [key]: value,
+    }));
+  };
   
   return (
     <div className="sidebar" style={{ width: "25vw" }}>
       <div className="description" style={{ padding: "1rem" }}>
         <h2 style={{ marginBottom: "1rem" }}>
-          Annotations        
+          Extractions        
         </h2>
+        <p>
+          Please correct the extractions below.
+        </p>
       </div>
 
-      <ul
-        className="sidebar__highlights"
-        style={{
-          height: "80vh",
-          overflowY: "auto",
-          overflowX: "hidden",
-          padding: "0 1rem",
-        }}
-      >
-        {highlights.map((highlight, index) => (
-          <li
-            key={index}
-            className="sidebar__highlight"
-            onClick={() => updateHash(highlight)}
-            onMouseEnter={() => setHoveredIndex(index)}
-            onMouseLeave={() => setHoveredIndex(null)}
-            style={{
-              borderBottom: index < highlights.length - 1 ? "1px solid black" : "none",
-              paddingBottom: "1rem",
-              marginBottom: "1rem",
-              backgroundColor: hoveredIndex === index ? "#f0f0f0" : "transparent", 
-              transition: "background-color 0.3s ease", 
-              cursor: "pointer",
-            }}
-          >
-            <div>
-              <strong>{highlight.comment.text}</strong>
-              {highlight.content.text && (
-                <blockquote style={{ marginTop: "0.5rem" }}>
-                  {`${highlight.content.text.slice(0, 90).trim()}…`}
-                </blockquote>
-              )}
-              {highlight.content.image && (
-                <div className="highlight__image" style={{ marginTop: "0.5rem" }}>
-                  <img src={highlight.content.image} alt="Screenshot" />
-                </div>
-              )}
-            </div>
-            <div className="highlight__location">
-              Page {highlight.position.pageNumber}
-            </div>
-          </li>
-        ))}
-      </ul>
-
-
-      
+      {Object.entries(data).map(([key, value]) => (
+        <div key={key} style={{ marginBottom: '10px' }}>
+          <label style={{ marginRight: '10px' }}>{key}:</label>
+          <input
+            type="text"
+            value={value}
+            onChange={(e) => handleChange(key, e.target.value)}
+            style={{ padding: '5px', border: '1px solid #ccc', borderRadius: '4px' }}
+          />
+        </div>
+      ))}
       
       <div style={{ padding: "1rem" }}>
-        <button type="button" onClick={safeAnnotations}>
-          Save Annotations
+        <button type="button" onClick={safeCorrection}>
+          Save Corrections
         </button>
       </div>
        
