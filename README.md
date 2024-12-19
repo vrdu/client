@@ -3,11 +3,8 @@
 
 ## Features
 
-## Available Scripts
 
-In the project directory, you can run:
-
-### `npm start`
+### `npm start` starts the application
 
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser. The application should work as is with the backend application.
