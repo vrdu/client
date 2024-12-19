@@ -1,6 +1,7 @@
-# Getting Started with Create React App
+# Frontend no-code web application for information extraction from PDF documents
+## Short description
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Features
 
 ## Available Scripts
 
