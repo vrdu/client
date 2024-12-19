@@ -9,62 +9,67 @@ In the project directory, you can run:
 ### `npm start`
 
 Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Open [http://localhost:3000](http://localhost:3000) to view it in your browser. The application should work as is with the backend application.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Folder structure
+src/
+├── components/    # Reusable UI components
+├── helpers/       # Helper functions
+├── models/        # Models of the data structures used
+├── routing/       # Routing of the application
+├── styling/       # Makes the application prity
+├── views/         # Page components for routing
+└── App.tsx        # Main application component
 
-### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Dependencies and Tools
 
-### `npm run build`
+#### UI/Styling
+- **@emotion/react**: For writing CSS styles with JavaScript. (v11.13.3)
+- **@emotion/styled**: Styled-components API for Emotion. (v11.13.0)
+- **@mui/material**: Material-UI library for React components. (v6.1.6)
+- **@mui/icons-material**: Material Design icons for React components. (v6.1.6)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+#### State Management and Drag-and-Drop
+- **react-beautiful-dnd**: Library for creating drag-and-drop interfaces. (v13.1.1)
+- **react-zoom-pan-pinch**: For zooming, panning, and pinch gestures in React. (v3.6.1)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+#### PDF Handling
+- **react-pdf**: For rendering PDF documents in the application. (v9.1.1)
+- **react-pdf-highlighter**: Highlighter component for annotating PDFs. (v8.0.0-rc.0)
+- **pdfjs-dist**: Library for parsing and rendering PDFs. (v4.4.168)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+#### File Uploads
+- **dropzone**: Library for creating drag-and-drop file uploads. (v6.0.0-beta.2)
+- **react-dropzone**: React wrapper for Dropzone.js. (v14.2.3)
 
-### `npm run eject`
+#### Routing
+- **react-router-dom**: For client-side routing in React applications. (v6.26.2)
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+#### HTTP Requests
+- **axios**: HTTP client for making API calls. (v1.7.7)
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+#### Testing
+- **@testing-library/jest-dom**: Custom matchers for testing DOM nodes. (v5.17.0)
+- **@testing-library/react**: Tools for testing React components. (v13.4.0)
+- **@testing-library/user-event**: Simulate user interactions in tests. (v13.5.0)
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+#### Build Tools
+- **react-scripts**: Build and configuration scripts for Create React App. (v5.0.1)
+- **css-loader**: Resolves `@import` and `url()` in CSS files. (v7.1.2)
+- **mini-css-extract-plugin**: Extracts CSS into separate files. (v2.9.2)
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+#### TypeScript and Type Definitions
+- **typescript**: Superset of JavaScript for type safety. (v4.9.5)
+- **@types/react**: TypeScript definitions for React. (v18.3.12)
+- **@types/react-dom**: TypeScript definitions for React DOM. (v18.3.1)
 
-## Learn More
+#### Utilities
+- **web-vitals**: Metrics to measure the performance of web applications. (v2.1.4)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+#### Application
+- **client**: The custom entry for your application itself. (v0.1.0)
 
-To learn React, check out the [React documentation](https://reactjs.org/).
 
-### Code Splitting
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
 
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
