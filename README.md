@@ -1,7 +1,15 @@
 # Frontend no-code web application for information extraction from PDF documents
 ## Short description
+This is the frontend component of a web application designed to provide a no-code interface for document information extraction. The application guides users through an intuitive process of defining labels, uploading and annotating example documents, and extracting information from target documents. Users can evaluate the effectiveness of the extraction process using the F1-score, ensuring accurate and reliable results.
 
-## Features
+##Features
+- **PDF Support:** Exclusively supports PDF documents for both uploading and processing.
+- **Large Document Handling:** Allows uploading of relatively large PDF files (up to 15MB).
+- **Annotation Capabilities:** Enables users to upload and annotate example documents. Annotation functionality works best with machine-readable PDF documents.
+- **Batch Extraction:** Supports the extraction of information from multiple documents simultaneously.
+- **User-Friendly Interface:** Designed for intuitive and straightforward usage.
+- **Parallel Extractions:** Facilitates multiple extractions running concurrently.
+  
 
 
 ### `npm start` starts the application
