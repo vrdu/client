@@ -12,14 +12,14 @@ Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser. The application should work as is with the backend application.
 
 ### Folder structure
-src/
-├── components/    # Reusable UI components
-├── helpers/       # Helper functions
-├── models/        # Models of the data structures used
-├── routing/       # Routing of the application
-├── styling/       # Makes the application prity
-├── views/         # Page components for routing
-└── App.tsx        # Main application component
+src/ <br>
+├── components/    # Reusable UI components<br>
+├── helpers/       # Helper functions<br>
+├── models/        # Models of the data structures used<br>
+├── routing/       # Routing of the application<br>
+├── styling/       # Makes the application prity<br>
+├── views/         # Page components for routing<br>
+└── App.tsx        # Main application component<br>
 
 
 ### Dependencies and Tools
