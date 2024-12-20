@@ -56,7 +56,8 @@ const Popup = ({ isOpen, onClose, extraction: initialExtraction }) => {
         <div>
           <h2>{extraction.name}</h2>
           <p>F1 Score: {extraction.f1}</p>
-          <p>ANLS: {extraction.anls}</p>
+           {/*<p>ANLS: {extraction.anls}</p>*/}
+          <h3>Documents</h3>
           <ul>
             {extraction.documentNames.map((doc, index) => (
              <span

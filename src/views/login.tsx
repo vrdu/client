@@ -46,10 +46,8 @@ function LoginForm() {
         console.log(response)
         // Get the returned user and update a new object.
         const user = new User(response.data);
-        console.log("made it")
         // Store the token into the local storage.
         sessionStorage.setItem('username', user.username);
-      console.log('Register:', { email, password });
       navigate("/home");
       } catch (error: unknown) {
       raiseError((error as any).response.data.detail);

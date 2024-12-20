@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 interface Props {
   highlights: Array<IHighlight>;
 }
-type DataType = Record<string, string>;
 
 export function Sidebar({
   highlights,
@@ -14,26 +13,34 @@ export function Sidebar({
 }: Props) {
 
   const navigate = useNavigate();
-  const [data, setData] = useState<DataType>({});
+  const [data, setData] = useState<Record<string, string>>({});
 
   const safeCorrection = async () => {
     try {
       const formData = new FormData();
       
-      Object.entries(data).forEach(([key, value]) => {
-        formData.append(key, value);
-      });
-  
+      const wrappedData = {
+        extractionSolution: { ...data }, 
+      };
+      
+      formData.append('extractionSolution', JSON.stringify(wrappedData.extractionSolution));
+
+
+      
       const username = sessionStorage.getItem('username'); 
       const projectName = sessionStorage.getItem('projectName');
       const documentName = sessionStorage.getItem('docCorrect');
   
         await api(false).post(`/projects/${username}/${projectName}/${documentName}/setCorrection`, 
-          {formData},
+          formData,
           {
            withCredentials: true,
+           headers: {
+            'Content-Type': 'application/json',
+           },
           });
         console.log("Annotations saved successfully and set as Instruction");
+        console.log(formData)
         navigate(`/projects/${projectName}/uploadExtractionDocuments`);    
       } catch (error) {
         console.error("Error saving annotations", error);
@@ -51,8 +58,16 @@ export function Sidebar({
             {
              withCredentials: true,
             });
-          console.log("Annotations saved successfully and set as Instruction");
-          setData(response.data);    
+          const parsedData = JSON.parse(response.data.extractionResult);
+          const sanitizedData = Object.fromEntries(
+            Object.entries(parsedData).map(([key, value]) => [
+              key.replace(/\*/g, '').trim(),
+              typeof value === 'string' ? value.replace(/\*/g, '').trim() : value,
+            ])
+          )as Record<string, string>;
+
+          setData(sanitizedData); 
+          console.log(response.data.extractionResult); 
         } catch (error) {
           console.error("Error saving annotations", error);
         }

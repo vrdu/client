@@ -162,7 +162,7 @@
 
     .button-container {
       display: flex;
-      justify-content: space-between; /* Spreads the buttons evenly */
+      justify-content: center; /* Spreads the buttons evenly */
       align-items: center; /* Aligns the buttons vertically in the middle */
       gap: 10px; /* Adds space between the buttons */
       width: 100%; /* Takes up the full width of the parent container */

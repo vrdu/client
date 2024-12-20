@@ -145,13 +145,6 @@ useEffect(() => {
   }
 }, [highlights]); 
 
-
-  // display correct pdf + get it
-  // send all the annotations to the backend
-  // get all the annotations from the backend
-  // deleting annotations (bonus)
-
-
   const scrollViewerTo = useRef((highlight: IHighlight) => {
     console.log("scrolling to", highlight);
     // Implement scrolling logic here

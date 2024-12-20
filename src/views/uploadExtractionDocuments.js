@@ -205,7 +205,7 @@ const UploadExtractionDocuments = () => {
       setFiles((prevFiles) =>
         prevFiles.map((f) =>
           f.name === file.name
-            ? new CustomFile({ ...f, status: { ...f.status, loading: false, completed: true, progress: 100 } })
+            ? new CustomFile({ ...f, status: { ...f.status, loading: false, completed: true } })
             : f instanceof CustomFile ? f : new CustomFile(f) // Ensure File instances
         )
       );

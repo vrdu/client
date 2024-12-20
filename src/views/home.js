@@ -36,7 +36,7 @@ const Home = () => {
                   <span className="project-name">{project.projectName}</span>
                   <div className="project-metrics">
                     <span>F1: {project.f1}</span>
-                    <span>Anls: {project.anls}</span>
+                     {/* <span>Anls: {project.anls}</span> */}
                     <span>Informations</span>
                   </div>
                 </div>

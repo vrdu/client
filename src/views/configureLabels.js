@@ -1022,29 +1022,6 @@ useEffect(() => {
 
         <div className="content-container">
           
-          <div className="left-container">
-            {!droppedFile ? (
-              <div {...getRootProps()} className="dropzone">
-                <input {...getInputProps()} />
-                {isDragActive ? (
-                  <p>Drop your PDF here...</p>
-                ) : (
-                  <p>Drag and drop a PDF document here, or click to select one</p>
-                )}
-              </div>
-            ) : (
-              <div>
-                <div className="document-controls">
-                  <Button variant="outlined" onClick={handleZoomOut}>-</Button>
-                  <Button variant="outlined" onClick={handleZoomIn}>+</Button>
-                </div>
-                
-                <div className="document-container">
-                  {/* PDF Document Component can be added later */}
-                </div>
-              </div>
-            )}
-          </div>
 
           {/* Right Placeholder */}
           <div className="right-placeholder">
@@ -1078,7 +1055,7 @@ useEffect(() => {
                   }}
                 >
                   <div className="label-family-container">
-                  <CloseButton  className="close-button" styling={{right:'-400px', top:"-12px"}}onClick={(e) =>{handleDeleteLabelFamily(newLabelFamily.id); e.stopPropagation();}} />
+                  <CloseButton  className="close-button" styling={{right:'-360px', top:"-12px"}}onClick={(e) =>{handleDeleteLabelFamily(newLabelFamily.id); e.stopPropagation();}} />
                       
                     <div className="label-family-name">
                       <p>
@@ -1130,7 +1107,7 @@ useEffect(() => {
                             e.currentTarget.querySelector('.close-button').style.visibility = 'hidden'; 
                           }}
                         >
-                         <CloseButton styling={{right: "-380px", top:'-18px'}} onClick={(e) =>{handleDeleteLabel(newLabelFamily, label.id); e.stopPropagation();}} />
+                         <CloseButton styling={{right: "-340px", top:'-18px'}} onClick={(e) =>{handleDeleteLabel(newLabelFamily, label.id); e.stopPropagation();}} />
 
                           <div className="label-header">
 
