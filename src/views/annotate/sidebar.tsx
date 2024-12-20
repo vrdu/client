@@ -59,6 +59,7 @@ export function Sidebar({
         }}
       >
         {highlights.map((highlight, index) => (
+          console.log("highlight here", highlight.annotation.labelName),
           <li
             key={index}
             className="sidebar__highlight"
@@ -66,6 +67,7 @@ export function Sidebar({
             onMouseEnter={() => setHoveredIndex(index)}
             onMouseLeave={() => setHoveredIndex(null)}
             style={{
+              
               borderBottom: index < highlights.length - 1 ? "1px solid black" : "none",
               paddingBottom: "1rem",
               marginBottom: "1rem",
@@ -75,12 +77,12 @@ export function Sidebar({
             }}
           >
             <div>
-              <strong>{highlight.comment.text}</strong>
+              <strong>Label Name: {highlight.annotation.labelName}</strong>
               {highlight.content.text && (
-                <blockquote style={{ marginTop: "0.5rem" }}>
-                  {`${highlight.content.text.slice(0, 90).trim()}…`}
-                </blockquote>
-              )}
+              <div style={{ marginTop: "0.5rem" }}>
+                {`${highlight.content.text.slice(0, 500).trim()}…`}
+              </div>
+            )}
               {highlight.content.image && (
                 <div className="highlight__image" style={{ marginTop: "0.5rem" }}>
                   <img src={highlight.content.image} alt="Screenshot" />

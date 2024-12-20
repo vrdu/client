@@ -1055,7 +1055,7 @@ useEffect(() => {
                   }}
                 >
                   <div className="label-family-container">
-                  <CloseButton  className="close-button" styling={{right:'-360px', top:"-12px"}}onClick={(e) =>{handleDeleteLabelFamily(newLabelFamily.id); e.stopPropagation();}} />
+                  <CloseButton  className="close-button" styling={{right:'-345px', top:"-12px"}}onClick={(e) =>{handleDeleteLabelFamily(newLabelFamily.id); e.stopPropagation();}} />
                       
                     <div className="label-family-name">
                       <p>
@@ -1107,7 +1107,7 @@ useEffect(() => {
                             e.currentTarget.querySelector('.close-button').style.visibility = 'hidden'; 
                           }}
                         >
-                         <CloseButton styling={{right: "-340px", top:'-18px'}} onClick={(e) =>{handleDeleteLabel(newLabelFamily, label.id); e.stopPropagation();}} />
+                         <CloseButton styling={{right: "-325px", top:'-18px'}} onClick={(e) =>{handleDeleteLabel(newLabelFamily, label.id); e.stopPropagation();}} />
 
                           <div className="label-header">
 
