@@ -62,15 +62,20 @@ const PopUpAnnotations: React.FC<PopUpAnnotationsProps> = ({ onConfirm, onOpen, 
           </h5>
           
           {expandedFamilyId === family.id && (
-            <ul>
-              {family.labels.map((label) => (
-                <li key={label.id}>  
-                  <Button variant="contained" color="primary" style={{ marginRight: "1rem" }}onClick={() => handleLabelClick(label)} >
+          <div>
+            {family.labels.map((label) => (
+              <div key={label.id} style={{ marginBottom: "0.5rem" }}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  style={{ marginRight: "1rem" }}
+                  onClick={() => handleLabelClick(label)}
+                >
                   <strong>{label.labelName}</strong>
-                  </Button>
-                </li>
-              ))}
-            </ul>
+                </Button>
+              </div>
+            ))}
+          </div>
           )}
         </div>
       ))}
