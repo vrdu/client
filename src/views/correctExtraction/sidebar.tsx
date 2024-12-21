@@ -61,13 +61,14 @@ export function Sidebar({
           const parsedData = JSON.parse(response.data.extractionResult);
           const sanitizedData = Object.fromEntries(
             Object.entries(parsedData).map(([key, value]) => [
-              key.replace(/\*/g, '').trim(),
-              typeof value === 'string' ? value.replace(/\*/g, '').trim() : value,
+              key.replace(/[*"]/g, '').trim(),
+              typeof value === 'string' ? value.replace(/[*",]/g, '').trim() : value,
             ])
-          )as Record<string, string>;
+          ) as Record<string, string>;
+          
 
           setData(sanitizedData); 
-          console.log(response.data.extractionResult); 
+          console.log("responseDAta"+response.data.extractionResult); 
         } catch (error) {
           console.error("Error saving annotations", error);
         }
