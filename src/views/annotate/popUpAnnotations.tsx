@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { api } from '../../helpers/api';  // Adjust path as needed
+import { api } from '../../helpers/api';  
 import LabelFamily from '../../models/labelFamily';
 import Label from '../../models/label';
 import { Annotation } from "../../models/annotation"; 
 import { Button } from '@mui/material';
 
 interface PopUpAnnotationsProps {
-  onConfirm: () => void;
+  onConfirm: (annotation: Annotation) => void;
   onOpen: () => void;
   setAnnotation: (annotation: Annotation) => void;
 }
@@ -40,15 +40,16 @@ const PopUpAnnotations: React.FC<PopUpAnnotationsProps> = ({ onConfirm, onOpen, 
   };
 
   const handleLabelClick = (label: Label) => {
-    const newAnnotation = new Annotation({ labelName: label.labelName, familyName: label.familyName });
+    const newAnnotation = new Annotation({ labelName: label.labelName, familyName: label.familyName});
     setLocalAnnotation(newAnnotation);
-    console.log(localAnnotation)
+    setAnnotation(newAnnotation);
+    console.log("localAnnotation: "+localAnnotation);
   };
 
   const handleClose = () => {
     setAnnotation(localAnnotation);
-    console.log("annotation:", localAnnotation);
-    onConfirm();
+    console.log("annotation:", localAnnotation.labelName);
+    onConfirm(localAnnotation);
   };
 
   return (

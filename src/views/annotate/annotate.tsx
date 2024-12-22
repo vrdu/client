@@ -173,7 +173,7 @@ useEffect(() => {
   };
 
   const addHighlight = (highlight: NewHighlight, annotation: Annotation) => {
-    console.log("annoation", annotation);
+    console.log("Here annoation", annotation.text);
     if (annotation.labelName && annotation.familyName) {
       annotation.text = highlight.content.text;
       const combinedHighlight = {
@@ -242,10 +242,11 @@ useEffect(() => {
           ) => (
             <PopUpAnnotations
               onOpen={transformSelection}
-              onConfirm={() => {
+              onConfirm={(selectedAnnotation) => {
+                selectedAnnotation.text = content.text;
                 addHighlight(
                   { content, position, comment: { text: "", emoji: "" } },
-                  annotation
+                  selectedAnnotation
                 );
                 hideTipAndSelection();
               }}
