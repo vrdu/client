@@ -110,7 +110,7 @@ export function Sidebar({
       
       <div style={{ padding: "1rem" }}>
         <button type="button" onClick={safeCorrection}>
-          Save Corrections
+          Safe Corrections
         </button>
       </div>
        
