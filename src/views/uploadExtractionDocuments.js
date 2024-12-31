@@ -410,7 +410,7 @@ const { getRootProps, getInputProps, isDragActive } = useDropzone({
   return (
     <div className="site-container">
       <div className="blob">
-        <h1 className="heading">Upload documents to extract</h1>
+        <h1 className="heading">Upload Documents to Extract</h1>
         <div className="dropzone-container">
           <div {...getRootProps({ className: 'dropzone' })}>
             <input {...getInputProps()} />
@@ -435,7 +435,7 @@ const { getRootProps, getInputProps, isDragActive } = useDropzone({
           
       </div>
       <div className="overview-extractions">
-        <h1 className="heading">overview extractions</h1>
+        <h1 className="heading">Overview Extractions</h1>
         <div className="extraction-container">
           <ul>
             {extractions.map((extraction, index) => (
