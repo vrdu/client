@@ -15,6 +15,7 @@ const Home = () => {
           withCredentials: true
         });
         setProjects(response.data);  
+        console.log(response.data);
       } catch (error) {
         console.error('Error fetching projects:', error);
       }
@@ -35,7 +36,7 @@ const Home = () => {
                 <div className="project clickable">
                   <span className="project-name">{project.projectName}</span>
                   <div className="project-metrics">
-                    <span>F1: {project.f1}</span>
+                    <span>F1: {project.f1.toFixed(2)}</span>
                      {/* <span>Anls: {project.anls}</span> */}
                     <span>Informations</span>
                   </div>

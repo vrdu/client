@@ -345,7 +345,6 @@ const { getRootProps, getInputProps, isDragActive } = useDropzone({
                   
           {documentName !== file.name && (
           <>
-          <span> {/* Add loading animation or checkmark here */} </span>
           <IconButton
             aria-label="delete"
             size="small"

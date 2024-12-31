@@ -55,7 +55,7 @@ const Popup = ({ isOpen, onClose, extraction: initialExtraction }) => {
       {extraction ? (
         <div>
           <h2>{extraction.name}</h2>
-          <p>F1 Score: {extraction.f1}</p>
+          <p>F1 Score: {extraction.f1.toFixed(2)}</p>
            {/*<p>ANLS: {extraction.anls}</p>*/}
           <h3>Documents</h3>
           <ul>
@@ -70,7 +70,7 @@ const Popup = ({ isOpen, onClose, extraction: initialExtraction }) => {
           </ul>
         </div>
       ) : (
-        <p>Loading...</p>
+        <p>Extraction not fininshed, try again later</p>
       )}
     </div>
       </div>
