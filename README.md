@@ -55,11 +55,6 @@ src/ <br>
 #### HTTP Requests
 - **axios**: HTTP client for making API calls. (v1.7.7)
 
-#### Testing
-- **@testing-library/jest-dom**: Custom matchers for testing DOM nodes. (v5.17.0)
-- **@testing-library/react**: Tools for testing React components. (v13.4.0)
-- **@testing-library/user-event**: Simulate user interactions in tests. (v13.5.0)
-
 #### Build Tools
 - **react-scripts**: Build and configuration scripts for Create React App. (v5.0.1)
 - **css-loader**: Resolves `@import` and `url()` in CSS files. (v7.1.2)
@@ -69,12 +64,6 @@ src/ <br>
 - **typescript**: Superset of JavaScript for type safety. (v4.9.5)
 - **@types/react**: TypeScript definitions for React. (v18.3.12)
 - **@types/react-dom**: TypeScript definitions for React DOM. (v18.3.1)
-
-#### Utilities
-- **web-vitals**: Metrics to measure the performance of web applications. (v2.1.4)
-
-#### Application
-- **client**: The custom entry for your application itself. (v0.1.0)
 
 
 
